@@ -1,0 +1,32 @@
+{
+    "version": "2.0.0",
+    "tasks": [{  //编译功能的配置
+        "label": "Compile",  //与launch.json的preLaunchTask对应
+        "command": "g++",
+        "args": [  //传入的参数
+            "${file}",
+            "-o",
+            "${fileDirname}/${fileBasenameNoExtension}.exe",
+            "-g",  //生成和调试有关的信息
+            "-m64",  //强制64位输出
+            "-Wall",
+            "-static-libgcc",  //对于gcc使用 静态链接libgcc
+            "-fexec-charset=GBK",  //生成程序使用GBK编码，避免win下乱码
+            "-D__USE_MINGW_ANSI_STUDIO",  //用MinGW写C的特定功能
+        ],
+        "type":"process",  //不用再打开shell
+        "group": {  //同时运行
+            "kind": "build",
+            "isDefault": true
+        },
+        "presentation": {
+            "echo": true,
+            "reveal": "always",  //执行任务时是否跳转到终端面板
+            "focus": false,
+            "panel": "shared",  //不同文件的编译信息共享一个终端面板
+            "showReuseMessage": true,
+            "clear": false
+        },
+        "problemMatcher": "$g++"  //报错信息
+    }]
+}
