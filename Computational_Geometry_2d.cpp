@@ -7,19 +7,20 @@
 #include <algorithm>
 using namespace std;
 
-//acos·µ»Ø0~pi£¬asin·µ»Ø-pi/2~pi/2¡£axxÏµÁĞ¾«¶È²»ºÃ£¬É÷ÓÃ
+typedef long long LL;
+//acosè¿”å›0~piï¼Œasinè¿”å›-pi/2~pi/2ã€‚axxç³»åˆ—ç²¾åº¦ä¸å¥½ï¼Œæ…ç”¨
 namespace geo_2d{
 const double eps=1e-9, INF=1e18, PI=3.14159265358979323846;
-struct V{  //ÏòÁ¿¼°ÆäÔËËãÊÇ¼¸ºÎ»ù´¡£¬µãÒ²¿ÉÒÔÓÃÏòÁ¿±íÊ¾
-    double x, y;
+struct V{  //å‘é‡åŠå…¶è¿ç®—æ˜¯å‡ ä½•åŸºç¡€ï¼Œç‚¹ä¹Ÿå¯ä»¥ç”¨å‘é‡è¡¨ç¤º
+    LL x, y;
     V():x(0),y(0){}
     V(const V &a){ *this=a; }
-    V(const double &a, const double &b):x(a),y(b){}
-    void read(){ scanf("%lf%lf", &x, &y); }
-    void print(){ printf("%.9lf %.9lf\n", x, y); }  //Î»Êı¶à¾«¶È¸ß
-    void print_space(){ printf("%.9lf %.9lf ", x, y); }
+    V(const LL &a, const LL &b):x(a),y(b){}
+    void read(){ scanf("%lld%lld", &x, &y); }
+    void print(){ printf("%.9lld %.9lld\n", x, y); }  //ä½æ•°å¤šç²¾åº¦é«˜
+    void print_space(){ printf("%.9lld %.9lld ", x, y); }
     void print_int(){ printf("%d %d\n", (int)x, (int)y); }
-}O, corner(-1e6-PI, -1e6-2*PI);  //Èı¸övector²ÎÊıabc±íÊ¾ÒÔaÎª¶¥µãµÄ½Çbac/cab
+}O, corner(-1e6-PI, -1e6-2*PI);  //ä¸‰ä¸ªvectorå‚æ•°abcè¡¨ç¤ºä»¥aä¸ºé¡¶ç‚¹çš„è§’bac/cab
 int pre(int i, int n){ return i==0?n-1:i-1; }
 int nxt(int i, int n){ return i==n-1?0:i+1; }
 /*
@@ -32,19 +33,19 @@ Iterator nxt(Iterator a, Container &S){
     return ++a==S.end()?S.end():a;
 }
 */
-inline double sqr(const double &x){ return x*x; }
-inline bool zero(const double &x){ return abs(x)<eps; }
-inline bool equal(const double &a, const double &b){ return zero(a-b); }
-inline bool less(const double &a, const double &b){ return a<b-eps; }  //¸üÑÏ¸ñ
-inline bool greater(const double &a, const double &b){ return a>b+eps; }
-inline bool in(const double &a, const double &b, const double &c){
+inline LL sqr(const LL &x){ return x*x; }
+inline bool zero(const LL &x){ return abs(x)<eps; }
+inline bool equal(const LL &a, const LL &b){ return zero(a-b); }
+inline bool less(const LL &a, const LL &b){ return a<b-eps; }  //æ›´ä¸¥æ ¼
+inline bool greater(const LL &a, const LL &b){ return a>b+eps; }
+inline bool in(const LL &a, const LL &b, const LL &c){
     if (b<c) return !geo_2d::less(a, b)&&!geo_2d::greater(a, c);
     else return !geo_2d::greater(a, b)&&!geo_2d::less(a, c);
 }
 inline bool cmp1(const V &a, const V &b){ return a.x<b.x; }
 inline bool cmp2(const V &a, const V &b){ return a.y<b.y; }
-inline bool cmp3(const V &a, const V &b){ return a.x>b.x||equal(a.x, b.x)&&a.y<b.y; }   //ÏÈxºóyÉıĞòÅÅĞò
-inline bool cmp4(const V &a, const V &b){ return a.x<b.x||equal(a.x, b.x)&&a.y>b.y; }   //ÏÈxºóyÉıĞòÅÅĞò
+inline bool cmp3(const V &a, const V &b){ return a.x>b.x||equal(a.x, b.x)&&a.y<b.y; }   //å…ˆxåyå‡åºæ’åº
+inline bool cmp4(const V &a, const V &b){ return a.x<b.x||equal(a.x, b.x)&&a.y>b.y; }   //å…ˆxåyå‡åºæ’åº
 struct cmp5{
     bool operator()(const V &a, const V &b){ return cmp3(a, b); }
 };
@@ -54,54 +55,54 @@ struct cmp6{
 inline V operator-(const V &a){ return V(-a.x, -a.y); }
 inline V operator+(const V &a, const V &b){ return V(a.x+b.x, a.y+b.y); }
 inline V operator-(const V &a, const V &b){ return V(a.x-b.x, a.y-b.y); }
-inline V operator*(const double &x, const V &a){ return V(a.x*x, a.y*x); }
-inline V operator*(const V &a, const double &x){ return V(a.x*x, a.y*x); }
-inline V operator/(const V &a, const double &x){ return V(a.x/x, a.y/x); }
+inline V operator*(const LL &x, const V &a){ return V(a.x*x, a.y*x); }
+inline V operator*(const V &a, const LL &x){ return V(a.x*x, a.y*x); }
+inline V operator/(const V &a, const LL &x){ return V(a.x/x, a.y/x); }
 inline bool operator==(const V &a, const V &b){ return equal(a.x, b.x)&&equal(a.y, b.y);}
 inline bool operator!=(const V &a, const V &b){ return !(a==b); }
-inline double operator*(const V &a, const V &b){ return a.x*b.x+a.y*b.y; }
-inline double operator^(const V &a, const V &b){ return a.x*b.y-a.y*b.x; }
-inline double len(const V &a){ return sqrt(a.x*a.x+a.y*a.y); }
-inline double dis(const V &a, const V &b){ return len(a-b); }
+inline LL operator*(const V &a, const V &b){ return a.x*b.x+a.y*b.y; }
+inline LL operator^(const V &a, const V &b){ return a.x*b.y-a.y*b.x; }
+inline LL len(const V &a){ return sqrt(a.x*a.x+a.y*a.y); }
+inline LL dis(const V &a, const V &b){ return len(a-b); }
 inline V mid(const V &a, const V &b){ return V((a.x+b.x)/2, (a.y+b.y)/2); }
 inline V c_wise(const V &a){ return V(a.y, -a.x); }
 inline V unit(const V &a){ return a/len(a); }
-inline double S_tri(const V &a, const V &b, const V &c){ return abs((b-a)^(c-a))/2; }
-inline double S_iso(const double &l, const double &theta){ return 0.5*l*l*sin(theta); }
-inline double S_roundtable(const double &r, const double &R, const double &h){  //Ô²Ì¨Ìå»ı
+inline LL S_tri(const V &a, const V &b, const V &c){ return abs((b-a)^(c-a))/2; }
+inline LL S_iso(const LL &l, const LL &theta){ return 0.5*l*l*sin(theta); }
+inline LL S_roundtable(const LL &r, const LL &R, const LL &h){  //åœ†å°ä½“ç§¯
     return PI*h*(sqr(r)+r*R+sqr(R))/3;
 }
-inline double slope(const V &a, const V &b){ return (a.y-b.y)/(a.x-b.x); }
-bool equal_sign(double a, double b){
+inline LL slope(const V &a, const V &b){ return (a.y-b.y)/(a.x-b.x); }
+bool equal_sign(LL a, LL b){
     return greater(a, 0)&&greater(b, 0)||less(a, 0)&&less(b, 0);
 }
-bool contra_sign(double a, double b){
+bool contra_sign(LL a, LL b){
     return greater(a, 0)&&less(b, 0)||less(a, 0)&&greater(b, 0);
 }
-inline bool operator<(const V &a, const V&b){  //¶şÔª×éÅÅĞò
+inline bool operator<(const V &a, const V&b){  //äºŒå…ƒç»„æ’åº
     return less(a.x, b.x)||(equal(a.x, b.x)&&less(a.y, b.y));
 }
 inline int quadrant(const V &a){
     return a.x>=0?(a.y>=0?1:4):(a.y>=0?2:3);
 }
-inline double angle(const double &a, const double &b, const double &c){  //ÓàÏÒ¶¨Àí£¬aÎªÍâ±ß
+inline LL angle(const LL &a, const LL &b, const LL &c){  //ä½™å¼¦å®šç†ï¼Œaä¸ºå¤–è¾¹
     return acos((sqr(b)+sqr(c)-sqr(a))/(2*b*c));
 }
-inline double angle(const V &a, const V &b){  //ÏòÁ¿¼Ğ½Ç1
+inline LL angle(const V &a, const V &b){  //å‘é‡å¤¹è§’1
     if (zero(a^b)) return 0;
     return acos(a*b/len(a)/len(b));
 }  //0~pi
-inline double angle2(const V &a, const V &b){  //ÏòÁ¿¼Ğ½Ç2-pi~pi£¬²æ³Ë¾ö¶¨·ûºÅ£¬ÓëÏòÁ¿Ë³ĞòÓĞ¹Ø
+inline LL angle2(const V &a, const V &b){  //å‘é‡å¤¹è§’2-pi~piï¼Œå‰ä¹˜å†³å®šç¬¦å·ï¼Œä¸å‘é‡é¡ºåºæœ‰å…³
     return (a^b)>=0?angle(a, b):-angle(a, b);
 }
 inline bool obtuse(const V &a, const V &b, const V &c){ return less((b-a)*(c-a), 0); }
 inline bool acute(const V &a, const V &b, const V &c){ return greater((b-a)*(c-a), 0); }
 inline bool right(const V &a, const V &b, const V &c){ return zero((b-a)*(c-a)); }
-inline V rotate(const V &a, double theta){
-    double s=sin(theta), c=cos(theta);
+inline V rotate(const V &a, LL theta){
+    LL s=sin(theta), c=cos(theta);
     return V(a.x*c-a.y*s, a.x*s+a.y*c);
 }
-struct L{  //¼ÇÂ¼µ¥Î»·½ÏòÏòÁ¿+Á½µã£¬Ò²¿ÉÒÔÓÃÀ´±íÊ¾Ïß¶Î
+struct L{  //è®°å½•å•ä½æ–¹å‘å‘é‡+ä¸¤ç‚¹ï¼Œä¹Ÿå¯ä»¥ç”¨æ¥è¡¨ç¤ºçº¿æ®µ
     V d, a, b;
     L(){}
     L(const V &x1, const V &x2, const V &x3):d(x1),a(x2),b(x3){}
@@ -110,11 +111,11 @@ struct L{  //¼ÇÂ¼µ¥Î»·½ÏòÏòÁ¿+Á½µã£¬Ò²¿ÉÒÔÓÃÀ´±íÊ¾Ïß¶Î
     void print(){ d.print_space(); a.print_space(); b.print_space(); puts("");}
 };
 inline L get_L(const V &d, const V &p){ return L(d, p, p+d); }
-inline double angle(const V &v){  //´ÓxÖá¿ªÊ¼ËãµÄ2pi·¶Î§½Ç¶È
-    double tmp=atan2(v.y, v.x);
+inline LL angle(const V &v){  //ä»xè½´å¼€å§‹ç®—çš„2pièŒƒå›´è§’åº¦
+    LL tmp=atan2(v.y, v.x);
     return tmp>=0?tmp:tmp+2*PI;
 }
-inline double angle(const L &l){
+inline LL angle(const L &l){
     return angle(l.d);
 }
 inline V priject(const V &p, const L &l){
@@ -129,39 +130,39 @@ inline bool on_line(const V &p, const L &l){
 inline bool on_seg(const V &p, const L &l){
     return zero(dis(p, l.a)+dis(p, l.b)-dis(l.a, l.b));
 }
-inline double dis(const V &p, const L &l){
+inline LL dis(const V &p, const L &l){
     return abs((p-l.a)^(p-l.b))/dis(l.a, l.b);
 }
-inline double dis2(const V &p, const L &l){  //´ø·ûºÅ¾àÀë
+inline LL dis2(const V &p, const L &l){  //å¸¦ç¬¦å·è·ç¦»
     return ((p-l.a)^(p-l.b))/dis(l.a, l.b);
 }
 inline bool collinear(const V &a, const V &b){ return zero(a^b); }
 inline bool orthogonal(const V &a, const V &b){ return zero(a*b); }
 inline bool parallel(const L &l1, const L &l2){ return zero(l1.d^l2.d); }
 inline bool orthogonal(const L &l1, const L &l2){ return zero(l1.d*l2.d); }
-inline bool straddle(const L &l1, const L &l2){  //l1¿çÁ¢ÔÚl2ÉÏ
-    double f1=(l1.a-l2.a)^l2.d;
-    double f2=(l1.b-l2.a)^l2.d;
+inline bool straddle(const L &l1, const L &l2){  //l1è·¨ç«‹åœ¨l2ä¸Š
+    LL f1=(l1.a-l2.a)^l2.d;
+    LL f2=(l1.b-l2.a)^l2.d;
     if (f1*f2<eps) return true;
     else return false;
 }
-inline bool is_intersect2(const L &l1, const L &l2){  //ÏßÓëÏß¶ÎÏà½»£¬l1ÎªÏß
-    double a=(l2.a-l1.a)^l1.d, b=(l2.b-l1.a)^l1.d;
+inline bool is_intersect2(const L &l1, const L &l2){  //çº¿ä¸çº¿æ®µç›¸äº¤ï¼Œl1ä¸ºçº¿
+    LL a=(l2.a-l1.a)^l1.d, b=(l2.b-l1.a)^l1.d;
     if (!less(a, 0)&&!greater(b, 0)) return true;
     if (!greater(a, 0)&&!less(b, 0)) return true;
     return false;
 }
-inline bool is_intersect(const L &l1, const L &l2){  //Ïß¶ÎÏà½»
+inline bool is_intersect(const L &l1, const L &l2){  //çº¿æ®µç›¸äº¤
     if (greater(min(l1.a.x, l1.b.x), max(l2.a.x, l2.b.x))||
         less(max(l1.a.x, l1.b.x), min(l2.a.x, l2.b.x))||
         greater(min(l1.a.y, l1.b.y), max(l2.a.y, l2.b.y))||
         less(max(l1.a.y, l1.b.y), min(l2.a.y, l2.b.y)))
             return false;
-    //ÒÔÉÏÊÇ¿ìËÙÅÅ³â
+    //ä»¥ä¸Šæ˜¯å¿«é€Ÿæ’æ–¥
     return straddle(l1, l2)&&straddle(l2, l1);
-}  //ÏÈ¿¼ÂÇl1¿çÁ¢ÔÚl2ÉÏ£¬ÔÙ¿¼ÂÇl2¿çÁ¢ÔÚl1ÉÏ
+}  //å…ˆè€ƒè™‘l1è·¨ç«‹åœ¨l2ä¸Šï¼Œå†è€ƒè™‘l2è·¨ç«‹åœ¨l1ä¸Š
 inline V intersection(const L &l1, const L &l2){
-    double k=((l2.a-l1.a)^l2.d)/(l1.d^l2.d);
+    LL k=((l2.a-l1.a)^l2.d)/(l1.d^l2.d);
     return l1.a+k*l1.d;
 }
 inline L bisector(const V &a, const V &b, const V &c){  //angleBAC
@@ -173,14 +174,14 @@ inline L perpendicular(const V &a, const V &b){
     V x=mid(a, b), d=c_wise(b-a);
     return L(d, x, x+d);
 }
-//Îª·½±ã²Ù×÷Ö±½Ó´«Êı×é£¬ÒÔOÎªÔ­µã
-inline double L_polygon(const V *a, const int &n){
-    double res=0;
+//ä¸ºæ–¹ä¾¿æ“ä½œç›´æ¥ä¼ æ•°ç»„ï¼Œä»¥Oä¸ºåŸç‚¹
+inline LL L_polygon(const V *a, const int &n){
+    LL res=0;
     for (int i=0; i<n; ++i) res+=dis(a[i], a[(i+1)%n]);
     return res;
 }
-inline double S_polygon(const V *a, const int &n){
-    double res=0;
+inline LL S_polygon(const V *a, const int &n){
+    LL res=0;
     for (int i=0; i<n; ++i) res+=(a[i]^a[(i+1)%n]);
     return res/2;
 }
@@ -193,7 +194,7 @@ inline void print_polygon(V *a, int &n, bool with_n){
     for (int i=0; i<n; ++i) a[i].print_int();
 }
 inline bool is_convex(const V *a, const int &n){
-    int j, k, d=0, nd; double o;
+    int j, k, d=0, nd; LL o;
     for (int i=0; i<n; ++i){
         j=(i+1)%n, k=(i+2)%n;
         o=(a[j]-a[i])^(a[k]-a[j]);
@@ -204,30 +205,30 @@ inline bool is_convex(const V *a, const int &n){
     }
     return true;
 }
-inline bool cmp(const V &a, const V &b){  //Ğ¡ÓÚº¯Êı£¬½öÓÃÓÚ°ëÆ½Ãæ
-    double dot=(a-O)^(b-O);
+inline bool cmp(const V &a, const V &b){  //å°äºå‡½æ•°ï¼Œä»…ç”¨äºåŠå¹³é¢
+    LL dot=(a-O)^(b-O);
     if (greater(dot, 0)) return true;
     return false;
 }
-inline bool Cmp(const V &a, const V &b){  //Ğ¡ÓÚº¯Êı£¬ÓÃÓÚÕû¸öÆ½Ãæ
+inline bool Cmp(const V &a, const V &b){  //å°äºå‡½æ•°ï¼Œç”¨äºæ•´ä¸ªå¹³é¢
     int quada=quadrant(a), quadb=quadrant(b);
     if (quada!=quadb) return quada<quadb;
     return (a^b)>0;
 }
-inline int rshort(const V &a, const V &b){  //¼«½ÇÅÅĞò(ÕÒÕıÈ·µÄ»ù×¼µãÒÔ¼«½ÇÎªÖ¸±êÅÅĞò£©±È½Ïº¯Êı
-    double dot=(a-O)^(b-O);
-    if (greater(dot, 0)) return 2;  //×ó·µ»Ø0£¬µÈ·µ»Ø1£¬ÓÒ·µ»Ø2
-    if (equal(dot, 0)) return less(dis(a, O), dis(b, O));  //È«¹²ÏßÇé¿ö
+inline int rshort(const V &a, const V &b){  //æè§’æ’åº(æ‰¾æ­£ç¡®çš„åŸºå‡†ç‚¹ä»¥æè§’ä¸ºæŒ‡æ ‡æ’åºï¼‰æ¯”è¾ƒå‡½æ•°
+    LL dot=(a-O)^(b-O);
+    if (greater(dot, 0)) return 2;  //å·¦è¿”å›0ï¼Œç­‰è¿”å›1ï¼Œå³è¿”å›2
+    if (equal(dot, 0)) return less(dis(a, O), dis(b, O));  //å…¨å…±çº¿æƒ…å†µ
     return 0;
 }
-inline int lshort(const V &a, const V &b){  //ÏòÁ¿aÊÇ·ñÔÚb×ó±ß
-    double dot=(a-O)^(b-O);
-    if (greater(dot, 0)) return 0;  //×ó·µ»Ø2£¬µÈ·µ»Ø1£¬ÓÒ·µ»Ø0
+inline int lshort(const V &a, const V &b){  //å‘é‡aæ˜¯å¦åœ¨bå·¦è¾¹
+    LL dot=(a-O)^(b-O);
+    if (greater(dot, 0)) return 0;  //å·¦è¿”å›2ï¼Œç­‰è¿”å›1ï¼Œå³è¿”å›0
     if (equal(dot, 0)) return less(dis(a, O), dis(b, O));
     return 2;
 }
 inline bool in_poly(const V &p, const V *a, const int &n){
-    double x; int j, res=0;
+    LL x; int j, res=0;
     for (int i=0; i<n; ++i){
         j=(i+1)%n;
         if (equal(a[i].y, a[j].y)) continue;
@@ -238,14 +239,14 @@ inline bool in_poly(const V &p, const V *a, const int &n){
     }
     return res?true:false;
 }
-inline int in_convex(const V &p, const V *a, const int &n){  //ÒÑ¾­È¥±ß½ç¼«½ÇÅÅĞò£¬Âú×ãa[0]ÔÚ×îÏÂ·½
-    O=a[0];  //»»Ô­µã
+inline int in_convex(const V &p, const V *a, const int &n){  //å·²ç»å»è¾¹ç•Œæè§’æ’åºï¼Œæ»¡è¶³a[0]åœ¨æœ€ä¸‹æ–¹
+    O=a[0];  //æ¢åŸç‚¹
     if (lshort(a[1], p)||rshort(a[n-1], p)) return 0;
     int x=upper_bound(a+1, a+n, p, cmp)-a-1;
-    O=a[x];  //2°üº¬ 1ÔÚ±ßÉÏ 0ÔÚÍ¹°üÍâ
+    O=a[x];  //2åŒ…å« 1åœ¨è¾¹ä¸Š 0åœ¨å‡¸åŒ…å¤–
     return lshort(p, a[(x+1)%n]);
 }
-inline void adjust_lowest(V *a, const int &n){  //ÄæÊ±ÕëÍ¹°üµ÷ÕûÎªÆğÊ¼µãÎª×îµÍµã 
+inline void adjust_lowest(V *a, const int &n){  //é€†æ—¶é’ˆå‡¸åŒ…è°ƒæ•´ä¸ºèµ·å§‹ç‚¹ä¸ºæœ€ä½ç‚¹ 
 	int id=0;
     for (int i=0; i<n; ++i)
         if (less(a[i].y, a[id].y)||
@@ -262,15 +263,15 @@ inline V find_lowest(V *a, const int &n){
                 equal(a[i].y, a[id].y)&&less(a[i].x, a[id].x)) id=i;
     return a[id];
 }
-inline void polar_sort(V *a, const int &n, const V &origin){  //¸ù¾İÍ¹°ü±ßÔµµã¼«½ÇÅÅĞò
+inline void polar_sort(V *a, const int &n, const V &origin){  //æ ¹æ®å‡¸åŒ…è¾¹ç¼˜ç‚¹æè§’æ’åº
     O=origin;
-    sort(a, a+n, rshort);  //ÒÔÔÚÓÒ²à»òÕß¹²ÏßÇÒ¾àÀëĞ¡ÎªĞ¡
-    int m;  //×îºóµÄ¹²Ïß²¿·ÖÒª·´×ª£¬ÒÔ±ã±ßÉÏµãÒª±£ÁôµÄÇé¿ö
+    sort(a, a+n, rshort);  //ä»¥åœ¨å³ä¾§æˆ–è€…å…±çº¿ä¸”è·ç¦»å°ä¸ºå°
+    int m;  //æœ€åçš„å…±çº¿éƒ¨åˆ†è¦åè½¬ï¼Œä»¥ä¾¿è¾¹ä¸Šç‚¹è¦ä¿ç•™çš„æƒ…å†µ
     for (m=n-1; m>=0; --m) if (!zero((a[m]-a[0])^(a[n-1]-a[0]))) break;
-    if (~m) reverse(a+m+1, a+n);  //Èç¹ûÊÇÒ»ÌõÖ±Ïß¾Í²»ÓÃ·´×ªÁË
+    if (~m) reverse(a+m+1, a+n);  //å¦‚æœæ˜¯ä¸€æ¡ç›´çº¿å°±ä¸ç”¨åè½¬äº†
     O=V(0, 0);
 }
-inline bool turn_right(const V &p1, const V &p2, const V &p3){  //p1Ö¸Ïòp2£¬p2Ö¸Ïòp3£¬Ç°Ãæ³ËºóÃæ
+inline bool turn_right(const V &p1, const V &p2, const V &p3){  //p1æŒ‡å‘p2ï¼Œp2æŒ‡å‘p3ï¼Œå‰é¢ä¹˜åé¢
     return less((p2-p1)^(p3-p2), 0);
 }
 inline bool turn_left(const V &p1, const V &p2, const V &p3){
@@ -285,12 +286,12 @@ inline void graham(V *a, int &n, bool include_on_edge){
             if (include_on_edge){
                 if (a[id1]!=a[i%n]&&!turn_right(a[id2], a[id1], a[i%n])) break;
             } else if (turn_left(a[id2], a[id1], a[i%n])) break;
-            if (i==n&&cnt==2) break;  //ÌØÅĞµã¶¼ÔÚÒ»ÌõÖ±ÏßÉÏµÄÇé¿ö
+            if (i==n&&cnt==2) break;  //ç‰¹åˆ¤ç‚¹éƒ½åœ¨ä¸€æ¡ç›´çº¿ä¸Šçš„æƒ…å†µ
             --cnt;
         }
         if (i<n) s[cnt++]=i;
     }
-    //if (a[s[0]]==a[s[cnt-1]]) cnt=1;  //ÌØÅĞÖ»ÓĞÒ»¸öµãµÄÇé¿ö£¬²»³öÏÖÖØ¸´µã
+    //if (a[s[0]]==a[s[cnt-1]]) cnt=1;  //ç‰¹åˆ¤åªæœ‰ä¸€ä¸ªç‚¹çš„æƒ…å†µï¼Œä¸å‡ºç°é‡å¤ç‚¹
     n=cnt;
     for (int i=0; i<n; ++i) a[i]=a[s[i]];
     delete []s;
@@ -341,12 +342,12 @@ inline bool in_dynavex(V &p, multiset<V, cmp>&S){
     S.erase(iter);
     return flag;
 }
-template <typename maintain_type>  //¶Ô¹ØÓÚ±ßµÄÊı¾İ½øĞĞ¶¯Ì¬Î¬»¤
-inline void maintain1(maintain_type &obj, const V &a, const V &b){  //¼Ó±ß
+template <typename maintain_type>  //å¯¹å…³äºè¾¹çš„æ•°æ®è¿›è¡ŒåŠ¨æ€ç»´æŠ¤
+inline void maintain1(maintain_type &obj, const V &a, const V &b){  //åŠ è¾¹
     obj+=dis(a, b);
 }
 template <typename maintain_type>
-inline void maintain2(maintain_type &obj, const V &a, const V &b){  //É¾±ß
+inline void maintain2(maintain_type &obj, const V &a, const V &b){  //åˆ è¾¹
     obj-=dis(a, b);
 }
 template <typename cmp, typename maintain_type>
@@ -401,14 +402,14 @@ struct Dynavex{
         return in_dynavex(p, upper)&&in_dynavex(p, lower);
     }
 };
-double height(const V &a, const V &b1, const V &b2){
+LL height(const V &a, const V &b1, const V &b2){
     return S_tri(a, b1, b2)/dis(b1, b2);
 }
-inline double diameter(const V *a, const int &n){
-    double ans=0; int j=0;
-    for (int i=0; i<n; ++i){  //Ã¶¾Ù¶¥µã£¬¶ÔÃæÊÇÆ½ĞĞÏß
+inline LL diameter(const V *a, const int &n){
+    LL ans=0; int j=0;
+    for (int i=0; i<n; ++i){  //æšä¸¾é¡¶ç‚¹ï¼Œå¯¹é¢æ˜¯å¹³è¡Œçº¿
         while (less(height(a[i], a[j], a[(j+1)%n]), height(a[i], a[(j+1)%n], a[(j+2)%n])))
-            j=(j+1)%n;  //²»ÓÃless»á³ö´í£ºĞ¡¾«¶ÈÎó²îµ¼ÖÂµÄ´íÎóÇ°½ø
+            j=(j+1)%n;  //ä¸ç”¨lessä¼šå‡ºé”™ï¼šå°ç²¾åº¦è¯¯å·®å¯¼è‡´çš„é”™è¯¯å‰è¿›
         ans=max(ans, dis(a[i], a[j]));
         ans=max(ans, dis(a[i], a[(j+1)%n]));
     }
@@ -428,7 +429,7 @@ inline V get_centroid(V *a, int &n){
         *get_centroid(a[i], a[(i+1)%n], V(0, 0));
     return res/S_polygon(a, n);
 }
-vector<V> get_intersection(V *a, int &n, const L &l){  //ÏßÓë¶à±ßĞÎ½»µã
+vector<V> get_intersection(V *a, int &n, const L &l){  //çº¿ä¸å¤šè¾¹å½¢äº¤ç‚¹
     L seg; vector<V> res;
     for (int i=0; i<n; ++i){
         seg=L(a[nxt(i, n)], a[i]);
@@ -442,31 +443,31 @@ vector<V> get_intersection(V *a, int &n, const L &l){  //ÏßÓë¶à±ßĞÎ½»µã
     }
     return res;
 }
-bool collide(V *a, int &n, V *b, int &m, V &v, const double &t){  //aÒÔËÙ¶ÈvÔË¶¯tÃëÊ±ÄÜ·ñ×²ÉÏb
+bool collide(V *a, int &n, V *b, int &m, V &v, const LL &t){  //aä»¥é€Ÿåº¦vè¿åŠ¨tç§’æ—¶èƒ½å¦æ’ä¸Šb
     for (int i=0; i<n; ++i)
         if (in_convex(a[i]+v*t, b, m)) return true;
     return false;
 }
-double max_dis(V *a, int &n){  //×î³¤¾àÀëµã¶Ô£¨Ö±¾¶£©
+LL max_dis(V *a, int &n){  //æœ€é•¿è·ç¦»ç‚¹å¯¹ï¼ˆç›´å¾„ï¼‰
     graham(a, n, false);
     return diameter(a, n);
 }
-inline double area(const V *a, const int &n){
-    double ans=0;
+inline LL area(const V *a, const int &n){
+    LL ans=0;
     for (int i=0; i<n; ++i) ans+=a[i]^a[(i+1)%n];
     return ans/2;
 }
-void convex_tangent(const V *a, const int &n, const V &p, int &p1, int &p2){  //Í¹°üµÄÇĞµã
+void convex_tangent(const V *a, const int &n, const V &p, int &p1, int &p2){  //å‡¸åŒ…çš„åˆ‡ç‚¹
 	if (n==1){
 		p1=p2=0;
 		return;
 	}
     for (int i=0; i<n; ++i){
         if (((a[i]-a[pre(i, n)])^(p-a[i]))>=0&&((p-a[i])^(a[nxt(i, n)]-a[i]))>0) p1=i;
-        if (((a[i]-a[pre(i, n)])^(p-a[i]))<0&&((p-a[i])^(a[nxt(i, n)]-a[i]))<=0) p2=i;  //ÓÒ²àµã
+        if (((a[i]-a[pre(i, n)])^(p-a[i]))<0&&((p-a[i])^(a[nxt(i, n)]-a[i]))<=0) p2=i;  //å³ä¾§ç‚¹
     }
 }
-void convex_cut(const V *a, V *b, const int &n, int &m, const L &l){  //°ëÆ½Ãæ¸î¶à±ßĞÎ
+void convex_cut(const V *a, V *b, const int &n, int &m, const L &l){  //åŠå¹³é¢å‰²å¤šè¾¹å½¢
     V p[2]; int id[2], cnt=0;
     for (int i=0; i<n; ++i){
         if (straddle(L(a[i], a[(i+1)%n]), l)){
@@ -476,7 +477,7 @@ void convex_cut(const V *a, V *b, const int &n, int &m, const L &l){  //°ëÆ½Ãæ¸î
             ++cnt;
         }
     }
-    if (cnt<2){  //cutÎ´ĞÎ³É¸îÏß
+    if (cnt<2){  //cutæœªå½¢æˆå‰²çº¿
         bool flag=false;
         for (int i=0; i<n; ++i){
             if (greater(l.d^(a[i]-l.a), 0)) flag=true;
@@ -486,7 +487,7 @@ void convex_cut(const V *a, V *b, const int &n, int &m, const L &l){  //°ëÆ½Ãæ¸î
         m=(flag?n:0);
         return;
     }
-    if (less(l.d*(p[1]-p[0]), 0)){  //µ÷Õû·½Ïò
+    if (less(l.d*(p[1]-p[0]), 0)){  //è°ƒæ•´æ–¹å‘
         swap(p[0], p[1]);
         swap(id[0], id[1]);
     }
@@ -496,71 +497,71 @@ void convex_cut(const V *a, V *b, const int &n, int &m, const L &l){  //°ëÆ½Ãæ¸î
         b[cnt++]=a[i];
     m=cnt;
 }
-double min_dis(V *a, V *b, const int &l, const int &r){  //Ëæ×Å·ÖÖÎ½øĞĞ£¬¶ÔbÒª°´yÅÅĞò
+LL min_dis(V *a, V *b, const int &l, const int &r){  //éšç€åˆ†æ²»è¿›è¡Œï¼Œå¯¹bè¦æŒ‰yæ’åº
     if (l+1==r) return INF;
     int m=(l+r)>>1;
-    double D=min(min_dis(a, b, l, m), min_dis(a, b, m, r));
+    LL D=min(min_dis(a, b, l, m), min_dis(a, b, m, r));
     V *c=(V*)malloc(sizeof(V)*(r-l));
     V *d=(V*)malloc(sizeof(V)*(r-l));
     int i=l, j=m, cnt=0;
-    while (i<m||j<r){  //¹é²¢
+    while (i<m||j<r){  //å½’å¹¶
         if (j==r||i<m&&b[i].y<b[j].y) c[cnt++]=b[i++];
         else c[cnt++]=b[j++];
     } cnt=0;
     L seperator(a[m], V(a[m].x, a[m].y+1));
     for (i=0; i<r-l; ++i) if (dis(c[i], seperator)<D) d[cnt++]=c[i];
-    for (i=0; i<cnt-2; ++i)  //¾àÀë·Ö¸îÏßÔÚdÄÚµÄµã£¬°´y×ø±êÏòºóÃ¶¾ÙÁ½¸ö
+    for (i=0; i<cnt-2; ++i)  //è·ç¦»åˆ†å‰²çº¿åœ¨då†…çš„ç‚¹ï¼ŒæŒ‰yåæ ‡å‘åæšä¸¾ä¸¤ä¸ª
         D=min(D, min(dis(d[i], d[i+1]), dis(d[i], d[i+2])));
     D=min(D, dis(d[cnt-2], d[cnt-1]));
     memcpy(b+l, c, sizeof(V)*(r-l));
     free(c); free(d);
     return D;
 }
-double min_dis(V *a, const int &n){  //×î¶Ì¾àÀëµã¶Ô
+LL min_dis(V *a, const int &n){  //æœ€çŸ­è·ç¦»ç‚¹å¯¹
     sort(a, a+n, cmp1);
     V *b=(V*)malloc(sizeof(V)*n);
     memcpy(b, a, sizeof(V)*n);
-    double ans=min_dis(a, b, 0, n);
+    LL ans=min_dis(a, b, 0, n);
     free(b);
     return ans;
 }
 struct C{
     V o;
-    double r;
-    C(const V &o1, double r1):o(o1), r(r1){}
-    C(double a=0, double b=0, double c=0):o(a, b), r(c){}
+    LL r;
+    C(const V &o1, LL r1):o(o1), r(r1){}
+    C(LL a=0, LL b=0, LL c=0):o(a, b), r(c){}
     C(const V &a, const V &b, const V &c){
         o=intersection(perpendicular(a, b), perpendicular(a, c));
         r=dis(o, a);
     }
     void read(){
         o.read();
-        scanf("%lf", &r);
+        scanf("%lld", &r);
     }
     void print(){
-        printf("%.9lf %.9lf %.9lf\n", o.x, o.y, r);
+        printf("%.9lld %.9lld %.9lld\n", o.x, o.y, r);
     }
 };
 inline bool in_cir(const V &p, const C &c){ return less(dis(c.o, p), c.r); }
 inline bool on_cir(const V &p, const C &c){ return equal(dis(c.o, p), c.r); }
 inline bool out_cir(const V &p, const C &c){ return greater(dis(c.o, p), c.r); }
-inline double dis(const L &l, const C &c){ return dis(c.o, l); }
-inline double dis(const C &c1, const C &c2){ return dis(c1.o, c2.o); }
-inline double rela(const L &l, const C &c){
-    double d=dis(l, c);
+inline LL dis(const L &l, const C &c){ return dis(c.o, l); }
+inline LL dis(const C &c1, const C &c2){ return dis(c1.o, c2.o); }
+inline LL rela(const L &l, const C &c){
+    LL d=dis(l, c);
     if (less(d, c.r)) return -1;  //intersect
     else if (equal(d, c.r)) return 0;  //tangent
     else return 1;  //seperate
 }
-inline int rela(const C &c1, const C &c2){  //·µ»ØµÄÊÇ¹«ÇĞÏßÊıÁ¿
-    double d=dis(c1, c2);
+inline int rela(const C &c1, const C &c2){  //è¿”å›çš„æ˜¯å…¬åˆ‡çº¿æ•°é‡
+    LL d=dis(c1, c2);
     if (greater(d, c1.r+c2.r)) return 4;  //seperate
     else if (equal(d, c1.r+c2.r)) return 3;  //circumscribed
     else if (less(max(c1.r, c2.r), min(c1.r, c2.r)+d)) return 2;  //intersect
     else if (equal(abs(c1.r-c2.r), d)) return 1;  //inscribed
     else return 0;  //include
 }
-inline C incircle(const V &a, const V &b, const V &c){  //ÄÚ½ÓÔ²
+inline C incircle(const V &a, const V &b, const V &c){  //å†…æ¥åœ†
     V o=intersection(bisector(a, b, c), bisector(b, a, c));
     return C(o, dis(o, L(a, b)));
 }
@@ -568,64 +569,64 @@ inline C excircle(const V &a, const V &b, const V &c){
     V o=intersection(perpendicular(a, b), perpendicular(a, c));
     return C(o, dis(o, a));
 }
-inline void get_intersection(const C &c, V &a, V &b){  //Ô²ÓëÖ±Ïß½»µã
+inline void get_intersection(const C &c, V &a, V &b){  //åœ†ä¸ç›´çº¿äº¤ç‚¹
     L l=L(a, b);
     V p=priject(c.o, l);
-    double d=sqrt(sqr(c.r)-sqr(dis(c.o, l)));
+    LL d=sqrt(sqr(c.r)-sqr(dis(c.o, l)));
     a=p+unit(l.d)*d;
     b=p-unit(l.d)*d;
     if (cmp3(b, a)) swap(a, b);
 }
-inline void get_intersection(const C &c1, const C &c2, V &a, V &b){  //Ô²ÓëÔ²½»µã
-    double d=dis(c1, c2);
-    double theta=acos((sqr(c1.r)+sqr(d)-sqr(c2.r))/(2*c1.r*d));
+inline void get_intersection(const C &c1, const C &c2, V &a, V &b){  //åœ†ä¸åœ†äº¤ç‚¹
+    LL d=dis(c1, c2);
+    LL theta=acos((sqr(c1.r)+sqr(d)-sqr(c2.r))/(2*c1.r*d));
     a=c1.o+c1.r*cos(theta)*unit(c2.o-c1.o);
     b=a+c_wise(c2.o-c1.o);
     get_intersection(c1, a, b);
 }
-inline void get_tangent(const C &c, const V &p, V &a, V &b){  //×¢Òâp²»ÄÜÔÚcÄÚ
+inline void get_tangent(const C &c, const V &p, V &a, V &b){  //æ³¨æ„pä¸èƒ½åœ¨cå†…
     C c2=C((c.o+p)/2, dis(c.o, p)/2);
     get_intersection(c, c2, a, b);
 }
-inline void get_circumscribe(const C &c1, const C &c2, V *v, int &cnt){  //Á½Ô²ÍâÇĞÏß
+inline void get_circumscribe(const C &c1, const C &c2, V *v, int &cnt){  //ä¸¤åœ†å¤–åˆ‡çº¿
     int rel=rela(c1, c2);
     if (rel<1) return;
-    double theta=acos((c2.r-c1.r)/dis(c1, c2));
+    LL theta=acos((c2.r-c1.r)/dis(c1, c2));
     V v1=rotate(c1.o-c2.o, theta), v2=rotate(c1.o-c2.o, -theta);
     v[cnt++]=c1.o+unit(v1)*c1.r;
     v[cnt++]=c2.o+unit(v1)*c2.r;
     v[cnt++]=c1.o+unit(v2)*c1.r;
     v[cnt++]=c2.o+unit(v2)*c2.r;
 }
-inline void get_inscribe(const C &c1, const C &c2, V *v, int &cnt){  //Á½Ô²ÄÚÇĞÏß
+inline void get_inscribe(const C &c1, const C &c2, V *v, int &cnt){  //ä¸¤åœ†å†…åˆ‡çº¿
     int rel=rela(c1, c2);
     if (rel<3) return;
-    double theta=acos((c1.r+c2.r)/dis(c1, c2));
+    LL theta=acos((c1.r+c2.r)/dis(c1, c2));
     V v1=rotate(c2.o-c1.o, theta), v2=rotate(c2.o-c1.o, -theta);
     v[cnt++]=c1.o+unit(v1)*c1.r;
     //v[cnt++]=c2.o+unit(v1)*c2.r;
     if (rel!=3) v[cnt++]=c1.o+unit(v2)*c1.r;
     //v[cnt++]=c2.o+unit(v2)*c2.r;
 }
-inline double S(const C &c){ return PI*c.r*c.r; }
-inline double S_sector(const C &c, double theta){
+inline LL S(const C &c){ return PI*c.r*c.r; }
+inline LL S_sector(const C &c, LL theta){
     return theta/2*c.r*c.r;
 }
-inline double S_sector(const C &c, const V &a, const V &b){  //a c.o bÈ·¶¨µÄ½Ç¸î³öµÄÉÈĞÎÃæ»ı
-    double theta=angle(a-c.o, b-c.o);
+inline LL S_sector(const C &c, const V &a, const V &b){  //a c.o bç¡®å®šçš„è§’å‰²å‡ºçš„æ‰‡å½¢é¢ç§¯
+    LL theta=angle(a-c.o, b-c.o);
     return S_sector(c, theta);
 }
-inline double S_arc(const C &c, const V &a, const V &b){
+inline LL S_arc(const C &c, const V &a, const V &b){
     return S_sector(c, a, b)-S_tri(c.o, a, b);
 }
-double S_intersection(const V &a, const V &b, const C &c){  //Ô²ĞÄÈı½ÇĞÎºÍÔ²µÄÃæ»ı½»
+LL S_intersection(const V &a, const V &b, const C &c){  //åœ†å¿ƒä¸‰è§’å½¢å’Œåœ†çš„é¢ç§¯äº¤
     L l(a, b);
-    double d=dis(c.o, l);
+    LL d=dis(c.o, l);
     if (!less(d, c.r)) return S_sector(c, a, b);
     if (in_cir(a, c)&&in_cir(b, c)) return S_tri(a, b, c.o);
     V P=a, P2=b, A=a, B=b;
     get_intersection(c, P, P2);
-    if ((!in_cir(a, c))&&(!in_cir(b, c))){  //Á½±ß¶¼ÔÚÔ²Íâ
+    if ((!in_cir(a, c))&&(!in_cir(b, c))){  //ä¸¤è¾¹éƒ½åœ¨åœ†å¤–
         if (!on_seg(P, l)) return S_sector(c, a, b);
         return S_sector(c, a, b)-S_arc(c, P, P2);
     }
@@ -633,8 +634,8 @@ double S_intersection(const V &a, const V &b, const C &c){  //Ô²ĞÄÈı½ÇĞÎºÍÔ²µÄÃæ
     if (!on_seg(P, l)) swap(P, P2);
     return S_tri(A, P, c.o)+S_sector(c, B, P);
 }
-double S_intersection(const V *a, const int &n, C &c){  //Ô²Óë¶à±ßĞÎµÄÃæ»ı½»
-    double ans=0, dir=0;
+LL S_intersection(const V *a, const int &n, C &c){  //åœ†ä¸å¤šè¾¹å½¢çš„é¢ç§¯äº¤
+    LL ans=0, dir=0;
     for (int i=0; i<n; ++i){
         int j=(i+1)%n;
         dir=((a[j]-a[i])^(c.o-a[j]));
@@ -643,24 +644,24 @@ double S_intersection(const V *a, const int &n, C &c){  //Ô²Óë¶à±ßĞÎµÄÃæ»ı½»
     }
     return abs(ans);
 }
-double S_intersection(const C &c1, const C &c2){  //Ô²ÓëÔ²µÄÃæ»ı½»(²»ÊÇ²¢£¡²¢µÄ»°¸ÄÒ»ÏÂ¾ÍĞĞÁË)
+LL S_intersection(const C &c1, const C &c2){  //åœ†ä¸åœ†çš„é¢ç§¯äº¤(ä¸æ˜¯å¹¶ï¼å¹¶çš„è¯æ”¹ä¸€ä¸‹å°±è¡Œäº†)
     int rel=rela(c1, c2);
     if (rel>=3) return 0;
     if (rel<=1) return min(S(c1), S(c2));
-    double d=dis(c1, c2);
-    double alpha=angle(c2.r, c1.r, d)*2;
-    double beta=angle(c1.r, c2.r, d)*2;
-    double S1=S_sector(c1, alpha)-S_iso(c1.r, alpha);
-    double S2=S_sector(c2, beta)-S_iso(c2.r, beta);
+    LL d=dis(c1, c2);
+    LL alpha=angle(c2.r, c1.r, d)*2;
+    LL beta=angle(c1.r, c2.r, d)*2;
+    LL S1=S_sector(c1, alpha)-S_iso(c1.r, alpha);
+    LL S2=S_sector(c2, beta)-S_iso(c2.r, beta);
     return S1+S2;
 }
-inline bool in_hplane(const V &p, const L &l){  //·½ÏòÏòÁ¿×ó²à
+inline bool in_hplane(const V &p, const L &l){  //æ–¹å‘å‘é‡å·¦ä¾§
     return less((p-l.a)^l.d, 0);
 }
-inline bool out_hplane(const V &p, const L &l){  //·½ÏòÏòÁ¿ÓÒ²à
+inline bool out_hplane(const V &p, const L &l){  //æ–¹å‘å‘é‡å³ä¾§
     return greater((p-l.a)^l.d, 0);
 }
-inline bool on_right(const L &a, const L &b, const L &c){  //aºÍbµÄ½»µãÔÚcÓÒ²à»òcÉÏ
+inline bool on_right(const L &a, const L &b, const L &c){  //aå’Œbçš„äº¤ç‚¹åœ¨cå³ä¾§æˆ–cä¸Š
     if (parallel(a, b)) return true;
     return !in_hplane(intersection(a, b), c);
 }
@@ -673,11 +674,11 @@ struct cmpA{
     }
 };
 inline bool cmpL(const L &a, const L &b){
-    double anga=angle(a), angb=angle(b);
+    LL anga=angle(a), angb=angle(b);
     if (equal(anga, angb)) return in_hplane(a.a, b);
     return anga<angb;
 }
-void hplane_intersection(L *a, int &n){  //¶ÓÁĞÖĞ´æµÄÊÇÓ¦±£ÁôµÄÏß¶ÎµÄ±àºÅ
+void hplane_intersection(L *a, int &n){  //é˜Ÿåˆ—ä¸­å­˜çš„æ˜¯åº”ä¿ç•™çš„çº¿æ®µçš„ç¼–å·
     sort(a, a+n, cmpL);
     int *q=new int[n], h=0, t=0;
     for (int i=0; i<n; ++i){
@@ -687,7 +688,7 @@ void hplane_intersection(L *a, int &n){  //¶ÓÁĞÖĞ´æµÄÊÇÓ¦±£ÁôµÄÏß¶ÎµÄ±àºÅ
     }
     while (h<t-1&&on_right(a[q[t-1]], a[q[t-2]], a[q[h]])) --t;
     n=t-h;
-    for (int i=h; i<t; ++i) a[i-h]=a[q[i]];  //·µ»ØÉ¾¼õºóµÄÓĞÏò±ß
+    for (int i=h; i<t; ++i) a[i-h]=a[q[i]];  //è¿”å›åˆ å‡åçš„æœ‰å‘è¾¹
 }
 bool build_convex(L *a, int &n, V *v){
     if (n<3) return false;
@@ -695,7 +696,7 @@ bool build_convex(L *a, int &n, V *v){
         v[i]=intersection(a[i], a[(i+1)%n]);
     return true;
 }
-void Minkowski_sum(V *a, int n, V *b, int m, V *c, int &N){  //ÒªÇóÍ¹°üÆğÊ¼µãÎª×îµÍµã£¬°´ÄæÊ±ÕëÅÅĞò 
+void Minkowski_sum(V *a, int n, V *b, int m, V *c, int &N){  //è¦æ±‚å‡¸åŒ…èµ·å§‹ç‚¹ä¸ºæœ€ä½ç‚¹ï¼ŒæŒ‰é€†æ—¶é’ˆæ’åº 
     V *l=(V*)malloc((n+m)*sizeof(V)); N=0;
     int cnta=0, cntb=0;
     V pa, pb;
@@ -716,12 +717,12 @@ void Minkowski_sum(V *a, int n, V *b, int m, V *c, int &N){  //ÒªÇóÍ¹°üÆğÊ¼µãÎª×
     }
     if (!m) c[0]=a[0];
     else if (!n) c[0]=b[0];
-    else c[0]=a[0]+b[0];  //×îÏÂÃæµÄµã£¬Ò»¶¨ÊÇÕıºÃÍùÓÒ×ß  //¿ÉÒÔÏÈÅĞÒ»ÏÂ
+    else c[0]=a[0]+b[0];  //æœ€ä¸‹é¢çš„ç‚¹ï¼Œä¸€å®šæ˜¯æ­£å¥½å¾€å³èµ°  //å¯ä»¥å…ˆåˆ¤ä¸€ä¸‹
     for (int i=0; i<N; ++i)
-        c[i+1]=c[i]+l[i];  //Éú³ÉÆğÊ¼µãÎª×îµÍµã£¬°´ÄæÊ±ÕëÅÅĞòµÄÍ¹°ü 
+        c[i+1]=c[i]+l[i];  //ç”Ÿæˆèµ·å§‹ç‚¹ä¸ºæœ€ä½ç‚¹ï¼ŒæŒ‰é€†æ—¶é’ˆæ’åºçš„å‡¸åŒ… 
     free(l);
 }
-C min_coverage(V *a, const int &n){  //Ëæ»ú»¯ÏÂO(n)µÄ×îĞ¡Ô²¸²¸Ç£¬»ùÓÚ³öÔ²ĞÂµãÒ»¶¨ÔÚĞÂÔ²ÉÏ
+C min_coverage(V *a, const int &n){  //éšæœºåŒ–ä¸‹O(n)çš„æœ€å°åœ†è¦†ç›–ï¼ŒåŸºäºå‡ºåœ†æ–°ç‚¹ä¸€å®šåœ¨æ–°åœ†ä¸Š
     C c=C(a[0], 0);
     for (int i=1; i<n; ++i)
     if (out_cir(a[i], c)){
@@ -737,24 +738,24 @@ C min_coverage(V *a, const int &n){  //Ëæ»ú»¯ÏÂO(n)µÄ×îĞ¡Ô²¸²¸Ç£¬»ùÓÚ³öÔ²ĞÂµãÒ»¶
     }
     return c;
 }
-bool convex_symmetric(V *a, const int &n, L &l, int p1, int p2){  //lÎª¶Ô³ÆÖá£¬p1¡¢p2ÎªÁ½²àµã
+bool convex_symmetric(V *a, const int &n, L &l, int p1, int p2){  //lä¸ºå¯¹ç§°è½´ï¼Œp1ã€p2ä¸ºä¸¤ä¾§ç‚¹
     int cnt=0;
     while (cnt<=n/2){
         if (reflect(a[p1], l)!=a[p2]) return false;
-        p1=pre(p1, n);  //×¢Òâp1µÄ´ÎĞòÔÚp2Ö®Ç°£¬p1µ¹×Å×ßp2Ë³×Å×ß
+        p1=pre(p1, n);  //æ³¨æ„p1çš„æ¬¡åºåœ¨p2ä¹‹å‰ï¼Œp1å€’ç€èµ°p2é¡ºç€èµ°
         p2=nxt(p2, n);
         ++cnt;
     }
     return true;
 }
-bool edge_point(V *a, const int &n, int p, const L &l){  //ÅĞ¶Ïµãa[p]ÊÇ·ñÊÇÏßl³¯Í¹°üÏò×ó±Æ½üµÄ½Ó´¥µã
+bool edge_point(V *a, const int &n, int p, const L &l){  //åˆ¤æ–­ç‚¹a[p]æ˜¯å¦æ˜¯çº¿læœå‡¸åŒ…å‘å·¦é€¼è¿‘çš„æ¥è§¦ç‚¹
     return !out_hplane(a[pre(p, n)], l)&&!out_hplane(a[nxt(p, n)], l);
 }
 vector<L> fast_symmetric(V *a, const int &n){
-    double *s=new double[n*4];
+    LL *s=new LL[n*4];
     for (int i=0; i<n; ++i){
-        s[i*2]=(a[i]-a[pre(i, n)])^(a[nxt(i, n)]-a[i]);  //½Ç
-        s[i*2+1]=dis(a[i], a[nxt(i, n)]);  //±ß
+        s[i*2]=(a[i]-a[pre(i, n)])^(a[nxt(i, n)]-a[i]);  //è§’
+        s[i*2+1]=dis(a[i], a[nxt(i, n)]);  //è¾¹
     }
     for (int i=0; i<2*n-2; ++i) s[i+2*n]=s[i];
     int *p=new int[n*4], pos, R, ans;
@@ -777,21 +778,21 @@ vector<L> fast_symmetric(V *a, const int &n){
     delete[] s; delete[] p;
     return sym;
 }
-double Simpson(double (*F)(double), double a, double b){
-    double c=(a+b)/2;
+LL Simpson(LL (*F)(LL), LL a, LL b){
+    LL c=(a+b)/2;
     return (b-a)*(F(a)+4*F(c)+F(b))/6;
 }
-double Romberg(double (*F)(double), double a, double b, double prians){  //Romberg»ı·Ö
-    double c=(a+b)/2;
-    double l=Simpson(F, a, c), r=Simpson(F, c, b);
+LL Romberg(LL (*F)(LL), LL a, LL b, LL prians){  //Rombergç§¯åˆ†
+    LL c=(a+b)/2;
+    LL l=Simpson(F, a, c), r=Simpson(F, c, b);
     if (equal(l+r, prians)) return l+r;
     else return Romberg(F, a, c, l)+Romberg(F, c, b, r);
 }
-inline double calc1(const C &c, const double &theta){  //¸ñÁÖ¹«Ê½ºó¶ÔÔ²»¡»ı·Ö
-    double x=c.o.x, r=c.r;
+inline LL calc1(const C &c, const LL &theta){  //æ ¼æ—å…¬å¼åå¯¹åœ†å¼§ç§¯åˆ†
+    LL x=c.o.x, r=c.r;
     return x*r*sin(theta)+sqr(r)/4*sin(2*theta)+sqr(r)/2*theta;
 }
-double CircleUnion(const C *a, const int &n){
+LL CircleUnion(const C *a, const int &n){
     bool *skip=new bool[n]();
     for (int i=0; i<n; ++i)
         for (int j=0; j<n; ++j)
@@ -799,9 +800,9 @@ double CircleUnion(const C *a, const int &n){
                 if (a[i].r<a[j].r) skip[i]=true;
                 if (equal(a[i].r, a[j].r)&&i<j) skip[i]=true;
             }
-    double a1, a2, l, r, ans=0; int cnt=0, t;
-    pair<double, int> *mark=new pair<double, int>[2*n+10]();
-    for (int i=0; i<n; ++i){  //i×÷Îª±»Çø¼ä¸²¸ÇµÄÔ²
+    LL a1, a2, l, r, ans=0; int cnt=0, t;
+    pair<LL, int> *mark=new pair<LL, int>[2*n+10]();
+    for (int i=0; i<n; ++i){  //iä½œä¸ºè¢«åŒºé—´è¦†ç›–çš„åœ†
         if (skip[i]) continue;
         t=0, cnt=0;
         mark[t++]=make_pair(0, 0);
@@ -813,7 +814,7 @@ double CircleUnion(const C *a, const int &n){
             a2=angle(a[j].r, a[i].r, dis(a[i].o, a[j].o));
             l=a1-a2, r=a1+a2;;
             if (l<0) l+=2*PI;
-            if (r>2*PI) r-=2*PI;  //ÕâÒ»ĞĞ²»ÄÜĞ´µÈÓÚ£¬²»È»ÏÂ·½j=0¾Í²»ÊÇ³ö·¢µã(0,0)£¬cnt»á¼Ó´í
+            if (r>2*PI) r-=2*PI;  //è¿™ä¸€è¡Œä¸èƒ½å†™ç­‰äºï¼Œä¸ç„¶ä¸‹æ–¹j=0å°±ä¸æ˜¯å‡ºå‘ç‚¹(0,0)ï¼Œcntä¼šåŠ é”™
             if (l>r) ++cnt;
             mark[t++]=make_pair(l, 1);
             mark[t++]=make_pair(r, -1);
@@ -828,13 +829,13 @@ double CircleUnion(const C *a, const int &n){
     delete[] skip; delete[] mark;
     return ans;
 }
-struct Dynaseg{  //¶¯Ì¬Ïß¶Î²¢/²î£¬±£Ö¤ÎŞÖØµş
-    using pdd=pair<double, double>;
+struct Dynaseg{  //åŠ¨æ€çº¿æ®µå¹¶/å·®ï¼Œä¿è¯æ— é‡å 
+    using pdd=pair<LL, LL>;
     using iter=set<pdd>::iterator;
     set<pdd> s;
-    static double ans;
+    static LL ans;
     C obj;
-    void insert(double l, double r){
+    void insert(LL l, LL r){
         if (l>r){
             insert(l, 2*PI); insert(0, r);
             return;
@@ -848,61 +849,27 @@ struct Dynaseg{  //¶¯Ì¬Ïß¶Î²¢/²î£¬±£Ö¤ÎŞÖØµş
                 s.insert(make_pair(r, it->second));
             if (it->first<l) ans+=calc1(obj, l)-calc1(obj, it->first), 
                 s.insert(make_pair(it->first, l));
-        }  //±£Ö¤Çø¼äÔÚ[l,r]ÄÚ
-        //res+=calc1(obj, r)-calc1(obj, l);  //Èç¹û¶¯Ì¬Ïß¶Î²¢¾ÍÒª¼Ó,²î²»ÓÃ¼Ó
+        }  //ä¿è¯åŒºé—´åœ¨[l,r]å†…
+        //res+=calc1(obj, r)-calc1(obj, l);  //å¦‚æœåŠ¨æ€çº¿æ®µå¹¶å°±è¦åŠ ,å·®ä¸ç”¨åŠ 
     }
 };
 }
 using namespace geo_2d;
 
-const int maxn=505;
-int T, n, m, tangent[maxn], farest[maxn], vis[maxn];
-V a[maxn] , b[maxn];
+const int maxn=1e5+5;
+int n, q;
+V a[maxn], b[maxn], avg;
+bool mycmp(const V &a, const V &b){
+	return angle(a-avg)<angle(b-avg);
+}
 
 int main(){
-	scanf("%d", &T);
-	while (T--){
-		scanf("%d%d", &n, &m);
-		read_polygon(a, n, false);
-		read_polygon(b, m, false);
-		polar_sort(a, n, find_lowest(a, n));
-		polar_sort(b, m, find_lowest(b, m));
-		graham(a, n, false);
-		graham(b, m, false);
-		bool flag=true;
-		for (int i=0; i<m; ++i){
-			if (in_convex(b[i], a, n)<2){
-				flag=false;
-				break;
-			}
-		}
-		if (!flag){
-			puts("-1");
-			continue;
-		}
-		int t, t2; V p; 
-		for (int i=0; i<n; ++i){
-			convex_tangent(b, m, a[i], t, tangent[i]);  //»ñµÃÍâÍ¹°üµãµÄÄÚÍ¹°üÇĞµã±àºÅ 
-			p=b[tangent[i]];
-			for (int j=i+1; j!=i; j=nxt(j, n))
-				if (turn_right(a[i], p, a[j])) farest[i]=j;  //»ñµÃÍâÍ¹°üÉÏÄ³µã²»Ïà½»ÄÚÍ¹°ü×îÔ¶ÄÜµ½´ïµÄµã
-				else break; 
-		}
-		memset(vis, 0, sizeof(vis));
-		int ans=1e9, cnt;
-		for (int i=0; i<n; ++i){
-			if (vis[i]) continue;
-			cnt=0; t=i;
-			while (t-i<n){
-				cnt++;
-				vis[t%n]=true;
-				t2=farest[t%n];
-				while (t2<t) t2+=n;
-				t=t2;
-			}
-			ans=min(ans, cnt);
-		}
-		printf("%d\n", ans);
+	read_polygon(a, n, true);
+	read_polygon(b, q, true);
+	for (int i=0; i<n; ++i) avg=avg+a[i];
+	avg=avg/n;
+	sort(b, b+q, mycmp);
+	for (int i=0; i<q; ++i){
+		
 	}
-	return 0;
 }
