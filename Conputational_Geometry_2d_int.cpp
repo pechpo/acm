@@ -1,4 +1,5 @@
 #include <set>
+#include <map>
 #include <cmath>
 #include <queue>
 #include <cstdio>
@@ -25,6 +26,7 @@ inline bool less(const double &a, const double &b){ return a<b-eps; }  //更严�
 inline bool greater(const double &a, const double &b){ return a>b+eps; }
 LL pre(LL i, LL n){ return i==0?n-1:i-1; }
 LL nxt(LL i, LL n){ return i==n-1?0:i+1; }
+/*
 template <typename Iterator, typename Container>
 Iterator pre(Iterator a, Container &S){
     return a==S.begin()?S.end():--a;
@@ -33,6 +35,7 @@ template <typename Iterator, typename Container>
 Iterator nxt(Iterator a, Container &S){
     return ++a==S.end()?S.end():a;
 }
+*/
 inline LL sqr(const LL &x){ return x*x; }
 inline bool cmp1(const V &a, const V &b){ return a.x<b.x; }
 inline bool cmp2(const V &a, const V &b){ return a.y<b.y; }
@@ -137,6 +140,14 @@ inline bool is_intersect(const L &l1, const L &l2){  //线段相交
     //以上是快速排斥
     return straddle(l1, l2)&&straddle(l2, l1);
 }  //先考虑l1跨立在l2上，再考虑l2跨立在l1上
+inline void read_polygon(V *a, LL &n, bool with_n){
+    if (with_n) scanf("%d", &n);
+    for (int i=0; i<n; ++i) a[i].read();
+}
+inline void print_polygon(V *a, LL &n, bool with_n){
+    if (with_n) printf("%d\n", n);
+    for (int i=0; i<n; ++i) a[i].print();
+}
 //为方便操作直接传数组，以O为原点
 inline double L_polygen(const V *a, const LL &n){
     double res=0;

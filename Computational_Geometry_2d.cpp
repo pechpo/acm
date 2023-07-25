@@ -855,21 +855,3 @@ struct Dynaseg{  //动态线段并/差，保证无重叠
 };
 }
 using namespace geo_2d;
-
-const int maxn=1e5+5;
-int n, q;
-V a[maxn], b[maxn], avg;
-bool mycmp(const V &a, const V &b){
-	return angle(a-avg)<angle(b-avg);
-}
-
-int main(){
-	read_polygon(a, n, true);
-	read_polygon(b, q, true);
-	for (int i=0; i<n; ++i) avg=avg+a[i];
-	avg=avg/n;
-	sort(b, b+q, mycmp);
-	for (int i=0; i<q; ++i){
-		
-	}
-}
