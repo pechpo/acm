@@ -854,3 +854,46 @@ struct Dynaseg{  //动态线段并/差，保证无重叠
 };
 }
 using namespace geo_2d;
+
+const int maxn=105;
+int T, n, m;
+V a[maxn];
+vector<pair<double, int>> b[maxn];
+
+int main(){
+    scanf("%d", &T);
+    while (T--){
+        scanf("%d%d", &n, &m);
+        read_polygon(a, n, false);
+        int id; int v1, v2;
+        L seg, l;
+        V p2; int p3;
+        double mindis;
+        for (int i=0; i<m; ++i){
+            scanf("%d", &id);
+            for (int j=id+1; j!=id; j=nxt(j, n)){  //寻找转折点
+                v1=(a[j]-a[pre(j, n)])^(a[j]-a[id]);
+                v2=(a[j]-a[id])^(a[nxt(j, n)]-a[j]);
+                if (!(v1>=-eps&&v2>eps)) continue;  //必须是转折点
+                l=L(a[id], a[j]);
+                mindis=INF;
+                for (int k=0; k<n; ++k){  //寻找投影点
+                    seg=L(a[nxt(k, n)], a[k]);
+                    if (is_intersect2(l, seg)){
+                        if (parallel(l, seg)){
+                            if (dis(seg.a, a[id])<mindis&&(seg.a-a[id])*(a[j]-a[id])>=0)
+                                mindis=dis(seg.a, a[id]), p2=seg.a, p3=k;
+                            if (dis(seg.b, a[id])<mindis&&(seg.b-a[id])*(a[j]-a[id])>=0)
+                                mindis=dis(seg.b, a[id]), p2=seg.b, p3=k;
+                        }
+                        V p=intersection(l, seg);
+                        if (dis(p, a[id])<mindis&&(p-a[id])*(a[j]-a[id])>=0)
+                            mindis=dis(p, a[id]), p2=p, p3=k;
+                    }
+                }
+                b[j].push_back(make_pair(0, 1));
+                b[p3].push_back(make_pair(dis(p2, a[p3]), -1));
+            }
+        }
+    }
+}
