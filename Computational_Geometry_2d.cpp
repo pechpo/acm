@@ -7,18 +7,17 @@
 #include <algorithm>
 using namespace std;
 
-typedef long long LL;
 //acos返回0~pi，asin返回-pi/2~pi/2。axx系列精度不好，慎用
 namespace geo_2d{
 const double eps=1e-9, INF=1e18, PI=3.14159265358979323846;
 struct V{  //向量及其运算是几何基础，点也可以用向量表示
-    LL x, y;
+    double x, y;
     V():x(0),y(0){}
     V(const V &a){ *this=a; }
-    V(const LL &a, const LL &b):x(a),y(b){}
-    void read(){ scanf("%lld%lld", &x, &y); }
-    void print(){ printf("%.9lld %.9lld\n", x, y); }  //位数多精度高
-    void print_space(){ printf("%.9lld %.9lld ", x, y); }
+    V(const double &a, const double &b):x(a),y(b){}
+    void read(){ scanf("%lf%lf", &x, &y); }
+    void print(){ printf("%.9lf %.9lf\n", x, y); }  //位数多精度高
+    void print_space(){ printf("%.9lf %.9lf ", x, y); }
     void print_int(){ printf("%d %d\n", (int)x, (int)y); }
 }O, corner(-1e6-PI, -1e6-2*PI);  //三个vector参数abc表示以a为顶点的角bac/cab
 int pre(int i, int n){ return i==0?n-1:i-1; }
@@ -33,12 +32,12 @@ Iterator nxt(Iterator a, Container &S){
     return ++a==S.end()?S.end():a;
 }
 */
-inline LL sqr(const LL &x){ return x*x; }
-inline bool zero(const LL &x){ return abs(x)<eps; }
-inline bool equal(const LL &a, const LL &b){ return zero(a-b); }
-inline bool less(const LL &a, const LL &b){ return a<b-eps; }  //更严格
-inline bool greater(const LL &a, const LL &b){ return a>b+eps; }
-inline bool in(const LL &a, const LL &b, const LL &c){
+inline double sqr(const double &x){ return x*x; }
+inline bool zero(const double &x){ return abs(x)<eps; }
+inline bool equal(const double &a, const double &b){ return zero(a-b); }
+inline bool less(const double &a, const double &b){ return a<b-eps; }  //更严格
+inline bool greater(const double &a, const double &b){ return a>b+eps; }
+inline bool in(const double &a, const double &b, const double &c){
     if (b<c) return !geo_2d::less(a, b)&&!geo_2d::greater(a, c);
     else return !geo_2d::greater(a, b)&&!geo_2d::less(a, c);
 }
@@ -55,28 +54,28 @@ struct cmp6{
 inline V operator-(const V &a){ return V(-a.x, -a.y); }
 inline V operator+(const V &a, const V &b){ return V(a.x+b.x, a.y+b.y); }
 inline V operator-(const V &a, const V &b){ return V(a.x-b.x, a.y-b.y); }
-inline V operator*(const LL &x, const V &a){ return V(a.x*x, a.y*x); }
-inline V operator*(const V &a, const LL &x){ return V(a.x*x, a.y*x); }
-inline V operator/(const V &a, const LL &x){ return V(a.x/x, a.y/x); }
+inline V operator*(const double &x, const V &a){ return V(a.x*x, a.y*x); }
+inline V operator*(const V &a, const double &x){ return V(a.x*x, a.y*x); }
+inline V operator/(const V &a, const double &x){ return V(a.x/x, a.y/x); }
 inline bool operator==(const V &a, const V &b){ return equal(a.x, b.x)&&equal(a.y, b.y);}
 inline bool operator!=(const V &a, const V &b){ return !(a==b); }
-inline LL operator*(const V &a, const V &b){ return a.x*b.x+a.y*b.y; }
-inline LL operator^(const V &a, const V &b){ return a.x*b.y-a.y*b.x; }
-inline LL len(const V &a){ return sqrt(a.x*a.x+a.y*a.y); }
-inline LL dis(const V &a, const V &b){ return len(a-b); }
+inline double operator*(const V &a, const V &b){ return a.x*b.x+a.y*b.y; }
+inline double operator^(const V &a, const V &b){ return a.x*b.y-a.y*b.x; }
+inline double len(const V &a){ return sqrt(a.x*a.x+a.y*a.y); }
+inline double dis(const V &a, const V &b){ return len(a-b); }
 inline V mid(const V &a, const V &b){ return V((a.x+b.x)/2, (a.y+b.y)/2); }
 inline V c_wise(const V &a){ return V(a.y, -a.x); }
 inline V unit(const V &a){ return a/len(a); }
-inline LL S_tri(const V &a, const V &b, const V &c){ return abs((b-a)^(c-a))/2; }
-inline LL S_iso(const LL &l, const LL &theta){ return 0.5*l*l*sin(theta); }
-inline LL S_roundtable(const LL &r, const LL &R, const LL &h){  //圆台体积
+inline double S_tri(const V &a, const V &b, const V &c){ return abs((b-a)^(c-a))/2; }
+inline double S_iso(const double &l, const double &theta){ return 0.5*l*l*sin(theta); }
+inline double S_roundtable(const double &r, const double &R, const double &h){  //圆台体积
     return PI*h*(sqr(r)+r*R+sqr(R))/3;
 }
-inline LL slope(const V &a, const V &b){ return (a.y-b.y)/(a.x-b.x); }
-bool equal_sign(LL a, LL b){
+inline double slope(const V &a, const V &b){ return (a.y-b.y)/(a.x-b.x); }
+bool equal_sign(double a, double b){
     return greater(a, 0)&&greater(b, 0)||less(a, 0)&&less(b, 0);
 }
-bool contra_sign(LL a, LL b){
+bool contra_sign(double a, double b){
     return greater(a, 0)&&less(b, 0)||less(a, 0)&&greater(b, 0);
 }
 inline bool operator<(const V &a, const V&b){  //二元组排序
@@ -85,21 +84,21 @@ inline bool operator<(const V &a, const V&b){  //二元组排序
 inline int quadrant(const V &a){
     return a.x>=0?(a.y>=0?1:4):(a.y>=0?2:3);
 }
-inline LL angle(const LL &a, const LL &b, const LL &c){  //余弦定理，a为外边
+inline double angle(const double &a, const double &b, const double &c){  //余弦定理，a为外边
     return acos((sqr(b)+sqr(c)-sqr(a))/(2*b*c));
 }
-inline LL angle(const V &a, const V &b){  //向量夹角1
+inline double angle(const V &a, const V &b){  //向量夹角1
     if (zero(a^b)) return 0;
     return acos(a*b/len(a)/len(b));
 }  //0~pi
-inline LL angle2(const V &a, const V &b){  //向量夹角2-pi~pi，叉乘决定符号，与向量顺序有关
+inline double angle2(const V &a, const V &b){  //向量夹角2-pi~pi，叉乘决定符号，与向量顺序有关
     return (a^b)>=0?angle(a, b):-angle(a, b);
 }
 inline bool obtuse(const V &a, const V &b, const V &c){ return less((b-a)*(c-a), 0); }
 inline bool acute(const V &a, const V &b, const V &c){ return greater((b-a)*(c-a), 0); }
 inline bool right(const V &a, const V &b, const V &c){ return zero((b-a)*(c-a)); }
-inline V rotate(const V &a, LL theta){
-    LL s=sin(theta), c=cos(theta);
+inline V rotate(const V &a, double theta){
+    double s=sin(theta), c=cos(theta);
     return V(a.x*c-a.y*s, a.x*s+a.y*c);
 }
 struct L{  //记录单位方向向量+两点，也可以用来表示线段
@@ -111,11 +110,11 @@ struct L{  //记录单位方向向量+两点，也可以用来表示线段
     void print(){ d.print_space(); a.print_space(); b.print_space(); puts("");}
 };
 inline L get_L(const V &d, const V &p){ return L(d, p, p+d); }
-inline LL angle(const V &v){  //从x轴开始算的2pi范围角度
-    LL tmp=atan2(v.y, v.x);
+inline double angle(const V &v){  //从x轴开始算的2pi范围角度
+    double tmp=atan2(v.y, v.x);
     return tmp>=0?tmp:tmp+2*PI;
 }
-inline LL angle(const L &l){
+inline double angle(const L &l){
     return angle(l.d);
 }
 inline V priject(const V &p, const L &l){
@@ -130,10 +129,10 @@ inline bool on_line(const V &p, const L &l){
 inline bool on_seg(const V &p, const L &l){
     return zero(dis(p, l.a)+dis(p, l.b)-dis(l.a, l.b));
 }
-inline LL dis(const V &p, const L &l){
+inline double dis(const V &p, const L &l){
     return abs((p-l.a)^(p-l.b))/dis(l.a, l.b);
 }
-inline LL dis2(const V &p, const L &l){  //带符号距离
+inline double dis2(const V &p, const L &l){  //带符号距离
     return ((p-l.a)^(p-l.b))/dis(l.a, l.b);
 }
 inline bool collinear(const V &a, const V &b){ return zero(a^b); }
@@ -141,13 +140,13 @@ inline bool orthogonal(const V &a, const V &b){ return zero(a*b); }
 inline bool parallel(const L &l1, const L &l2){ return zero(l1.d^l2.d); }
 inline bool orthogonal(const L &l1, const L &l2){ return zero(l1.d*l2.d); }
 inline bool straddle(const L &l1, const L &l2){  //l1跨立在l2上
-    LL f1=(l1.a-l2.a)^l2.d;
-    LL f2=(l1.b-l2.a)^l2.d;
+    double f1=(l1.a-l2.a)^l2.d;
+    double f2=(l1.b-l2.a)^l2.d;
     if (f1*f2<eps) return true;
     else return false;
 }
 inline bool is_intersect2(const L &l1, const L &l2){  //线与线段相交，l1为线
-    LL a=(l2.a-l1.a)^l1.d, b=(l2.b-l1.a)^l1.d;
+    double a=(l2.a-l1.a)^l1.d, b=(l2.b-l1.a)^l1.d;
     if (!less(a, 0)&&!greater(b, 0)) return true;
     if (!greater(a, 0)&&!less(b, 0)) return true;
     return false;
@@ -162,7 +161,7 @@ inline bool is_intersect(const L &l1, const L &l2){  //线段相交
     return straddle(l1, l2)&&straddle(l2, l1);
 }  //先考虑l1跨立在l2上，再考虑l2跨立在l1上
 inline V intersection(const L &l1, const L &l2){
-    LL k=((l2.a-l1.a)^l2.d)/(l1.d^l2.d);
+    double k=((l2.a-l1.a)^l2.d)/(l1.d^l2.d);
     return l1.a+k*l1.d;
 }
 inline L bisector(const V &a, const V &b, const V &c){  //angleBAC
@@ -175,13 +174,13 @@ inline L perpendicular(const V &a, const V &b){
     return L(d, x, x+d);
 }
 //为方便操作直接传数组，以O为原点
-inline LL L_polygon(const V *a, const int &n){
-    LL res=0;
+inline double L_polygon(const V *a, const int &n){
+    double res=0;
     for (int i=0; i<n; ++i) res+=dis(a[i], a[(i+1)%n]);
     return res;
 }
-inline LL S_polygon(const V *a, const int &n){
-    LL res=0;
+inline double S_polygon(const V *a, const int &n){
+    double res=0;
     for (int i=0; i<n; ++i) res+=(a[i]^a[(i+1)%n]);
     return res/2;
 }
@@ -194,7 +193,7 @@ inline void print_polygon(V *a, int &n, bool with_n){
     for (int i=0; i<n; ++i) a[i].print_int();
 }
 inline bool is_convex(const V *a, const int &n){
-    int j, k, d=0, nd; LL o;
+    int j, k, d=0, nd; double o;
     for (int i=0; i<n; ++i){
         j=(i+1)%n, k=(i+2)%n;
         o=(a[j]-a[i])^(a[k]-a[j]);
@@ -206,7 +205,7 @@ inline bool is_convex(const V *a, const int &n){
     return true;
 }
 inline bool cmp(const V &a, const V &b){  //小于函数，仅用于半平面
-    LL dot=(a-O)^(b-O);
+    double dot=(a-O)^(b-O);
     if (greater(dot, 0)) return true;
     return false;
 }
@@ -216,19 +215,19 @@ inline bool Cmp(const V &a, const V &b){  //小于函数，用于整个平面
     return (a^b)>0;
 }
 inline int rshort(const V &a, const V &b){  //极角排序(找正确的基准点以极角为指标排序）比较函数
-    LL dot=(a-O)^(b-O);
+    double dot=(a-O)^(b-O);
     if (greater(dot, 0)) return 2;  //左返回0，等返回1，右返回2
     if (equal(dot, 0)) return less(dis(a, O), dis(b, O));  //全共线情况
     return 0;
 }
 inline int lshort(const V &a, const V &b){  //向量a是否在b左边
-    LL dot=(a-O)^(b-O);
+    double dot=(a-O)^(b-O);
     if (greater(dot, 0)) return 0;  //左返回2，等返回1，右返回0
     if (equal(dot, 0)) return less(dis(a, O), dis(b, O));
     return 2;
 }
 inline bool in_poly(const V &p, const V *a, const int &n){
-    LL x; int j, res=0;
+    double x; int j, res=0;
     for (int i=0; i<n; ++i){
         j=(i+1)%n;
         if (equal(a[i].y, a[j].y)) continue;
@@ -402,11 +401,11 @@ struct Dynavex{
         return in_dynavex(p, upper)&&in_dynavex(p, lower);
     }
 };
-LL height(const V &a, const V &b1, const V &b2){
+double height(const V &a, const V &b1, const V &b2){
     return S_tri(a, b1, b2)/dis(b1, b2);
 }
-inline LL diameter(const V *a, const int &n){
-    LL ans=0; int j=0;
+inline double diameter(const V *a, const int &n){
+    double ans=0; int j=0;
     for (int i=0; i<n; ++i){  //枚举顶点，对面是平行线
         while (less(height(a[i], a[j], a[(j+1)%n]), height(a[i], a[(j+1)%n], a[(j+2)%n])))
             j=(j+1)%n;  //不用less会出错：小精度误差导致的错误前进
@@ -443,17 +442,17 @@ vector<V> get_intersection(V *a, int &n, const L &l){  //线与多边形交点
     }
     return res;
 }
-bool collide(V *a, int &n, V *b, int &m, V &v, const LL &t){  //a以速度v运动t秒时能否撞上b
+bool collide(V *a, int &n, V *b, int &m, V &v, const double &t){  //a以速度v运动t秒时能否撞上b
     for (int i=0; i<n; ++i)
         if (in_convex(a[i]+v*t, b, m)) return true;
     return false;
 }
-LL max_dis(V *a, int &n){  //最长距离点对（直径）
+double max_dis(V *a, int &n){  //最长距离点对（直径）
     graham(a, n, false);
     return diameter(a, n);
 }
-inline LL area(const V *a, const int &n){
-    LL ans=0;
+inline double area(const V *a, const int &n){
+    double ans=0;
     for (int i=0; i<n; ++i) ans+=a[i]^a[(i+1)%n];
     return ans/2;
 }
@@ -497,10 +496,10 @@ void convex_cut(const V *a, V *b, const int &n, int &m, const L &l){  //半平�
         b[cnt++]=a[i];
     m=cnt;
 }
-LL min_dis(V *a, V *b, const int &l, const int &r){  //随着分治进行，对b要按y排序
+double min_dis(V *a, V *b, const int &l, const int &r){  //随着分治进行，对b要按y排序
     if (l+1==r) return INF;
     int m=(l+r)>>1;
-    LL D=min(min_dis(a, b, l, m), min_dis(a, b, m, r));
+    double D=min(min_dis(a, b, l, m), min_dis(a, b, m, r));
     V *c=(V*)malloc(sizeof(V)*(r-l));
     V *d=(V*)malloc(sizeof(V)*(r-l));
     int i=l, j=m, cnt=0;
@@ -517,44 +516,44 @@ LL min_dis(V *a, V *b, const int &l, const int &r){  //随着分治进行，对b
     free(c); free(d);
     return D;
 }
-LL min_dis(V *a, const int &n){  //最短距离点对
+double min_dis(V *a, const int &n){  //最短距离点对
     sort(a, a+n, cmp1);
     V *b=(V*)malloc(sizeof(V)*n);
     memcpy(b, a, sizeof(V)*n);
-    LL ans=min_dis(a, b, 0, n);
+    double ans=min_dis(a, b, 0, n);
     free(b);
     return ans;
 }
 struct C{
     V o;
-    LL r;
-    C(const V &o1, LL r1):o(o1), r(r1){}
-    C(LL a=0, LL b=0, LL c=0):o(a, b), r(c){}
+    double r;
+    C(const V &o1, double r1):o(o1), r(r1){}
+    C(double a=0, double b=0, double c=0):o(a, b), r(c){}
     C(const V &a, const V &b, const V &c){
         o=intersection(perpendicular(a, b), perpendicular(a, c));
         r=dis(o, a);
     }
     void read(){
         o.read();
-        scanf("%lld", &r);
+        scanf("%lf", &r);
     }
     void print(){
-        printf("%.9lld %.9lld %.9lld\n", o.x, o.y, r);
+        printf("%.9lf %.9lf %.9lf\n", o.x, o.y, r);
     }
 };
 inline bool in_cir(const V &p, const C &c){ return less(dis(c.o, p), c.r); }
 inline bool on_cir(const V &p, const C &c){ return equal(dis(c.o, p), c.r); }
 inline bool out_cir(const V &p, const C &c){ return greater(dis(c.o, p), c.r); }
-inline LL dis(const L &l, const C &c){ return dis(c.o, l); }
-inline LL dis(const C &c1, const C &c2){ return dis(c1.o, c2.o); }
-inline LL rela(const L &l, const C &c){
-    LL d=dis(l, c);
+inline double dis(const L &l, const C &c){ return dis(c.o, l); }
+inline double dis(const C &c1, const C &c2){ return dis(c1.o, c2.o); }
+inline double rela(const L &l, const C &c){
+    double d=dis(l, c);
     if (less(d, c.r)) return -1;  //intersect
     else if (equal(d, c.r)) return 0;  //tangent
     else return 1;  //seperate
 }
 inline int rela(const C &c1, const C &c2){  //返回的是公切线数量
-    LL d=dis(c1, c2);
+    double d=dis(c1, c2);
     if (greater(d, c1.r+c2.r)) return 4;  //seperate
     else if (equal(d, c1.r+c2.r)) return 3;  //circumscribed
     else if (less(max(c1.r, c2.r), min(c1.r, c2.r)+d)) return 2;  //intersect
@@ -572,14 +571,14 @@ inline C excircle(const V &a, const V &b, const V &c){
 inline void get_intersection(const C &c, V &a, V &b){  //圆与直线交点
     L l=L(a, b);
     V p=priject(c.o, l);
-    LL d=sqrt(sqr(c.r)-sqr(dis(c.o, l)));
+    double d=sqrt(sqr(c.r)-sqr(dis(c.o, l)));
     a=p+unit(l.d)*d;
     b=p-unit(l.d)*d;
     if (cmp3(b, a)) swap(a, b);
 }
 inline void get_intersection(const C &c1, const C &c2, V &a, V &b){  //圆与圆交点
-    LL d=dis(c1, c2);
-    LL theta=acos((sqr(c1.r)+sqr(d)-sqr(c2.r))/(2*c1.r*d));
+    double d=dis(c1, c2);
+    double theta=acos((sqr(c1.r)+sqr(d)-sqr(c2.r))/(2*c1.r*d));
     a=c1.o+c1.r*cos(theta)*unit(c2.o-c1.o);
     b=a+c_wise(c2.o-c1.o);
     get_intersection(c1, a, b);
@@ -591,7 +590,7 @@ inline void get_tangent(const C &c, const V &p, V &a, V &b){  //注意p不能在
 inline void get_circumscribe(const C &c1, const C &c2, V *v, int &cnt){  //两圆外切线
     int rel=rela(c1, c2);
     if (rel<1) return;
-    LL theta=acos((c2.r-c1.r)/dis(c1, c2));
+    double theta=acos((c2.r-c1.r)/dis(c1, c2));
     V v1=rotate(c1.o-c2.o, theta), v2=rotate(c1.o-c2.o, -theta);
     v[cnt++]=c1.o+unit(v1)*c1.r;
     v[cnt++]=c2.o+unit(v1)*c2.r;
@@ -601,27 +600,27 @@ inline void get_circumscribe(const C &c1, const C &c2, V *v, int &cnt){  //两�
 inline void get_inscribe(const C &c1, const C &c2, V *v, int &cnt){  //两圆内切线
     int rel=rela(c1, c2);
     if (rel<3) return;
-    LL theta=acos((c1.r+c2.r)/dis(c1, c2));
+    double theta=acos((c1.r+c2.r)/dis(c1, c2));
     V v1=rotate(c2.o-c1.o, theta), v2=rotate(c2.o-c1.o, -theta);
     v[cnt++]=c1.o+unit(v1)*c1.r;
     //v[cnt++]=c2.o+unit(v1)*c2.r;
     if (rel!=3) v[cnt++]=c1.o+unit(v2)*c1.r;
     //v[cnt++]=c2.o+unit(v2)*c2.r;
 }
-inline LL S(const C &c){ return PI*c.r*c.r; }
-inline LL S_sector(const C &c, LL theta){
+inline double S(const C &c){ return PI*c.r*c.r; }
+inline double S_sector(const C &c, double theta){
     return theta/2*c.r*c.r;
 }
-inline LL S_sector(const C &c, const V &a, const V &b){  //a c.o b确定的角割出的扇形面积
-    LL theta=angle(a-c.o, b-c.o);
+inline double S_sector(const C &c, const V &a, const V &b){  //a c.o b确定的角割出的扇形面积
+    double theta=angle(a-c.o, b-c.o);
     return S_sector(c, theta);
 }
-inline LL S_arc(const C &c, const V &a, const V &b){
+inline double S_arc(const C &c, const V &a, const V &b){
     return S_sector(c, a, b)-S_tri(c.o, a, b);
 }
-LL S_intersection(const V &a, const V &b, const C &c){  //圆心三角形和圆的面积交
+double S_intersection(const V &a, const V &b, const C &c){  //圆心三角形和圆的面积交
     L l(a, b);
-    LL d=dis(c.o, l);
+    double d=dis(c.o, l);
     if (!less(d, c.r)) return S_sector(c, a, b);
     if (in_cir(a, c)&&in_cir(b, c)) return S_tri(a, b, c.o);
     V P=a, P2=b, A=a, B=b;
@@ -634,8 +633,8 @@ LL S_intersection(const V &a, const V &b, const C &c){  //圆心三角形和圆�
     if (!on_seg(P, l)) swap(P, P2);
     return S_tri(A, P, c.o)+S_sector(c, B, P);
 }
-LL S_intersection(const V *a, const int &n, C &c){  //圆与多边形的面积交
-    LL ans=0, dir=0;
+double S_intersection(const V *a, const int &n, C &c){  //圆与多边形的面积交
+    double ans=0, dir=0;
     for (int i=0; i<n; ++i){
         int j=(i+1)%n;
         dir=((a[j]-a[i])^(c.o-a[j]));
@@ -644,15 +643,15 @@ LL S_intersection(const V *a, const int &n, C &c){  //圆与多边形的面积�
     }
     return abs(ans);
 }
-LL S_intersection(const C &c1, const C &c2){  //圆与圆的面积交(不是并！并的话改一下就行了)
+double S_intersection(const C &c1, const C &c2){  //圆与圆的面积交(不是并！并的话改一下就行了)
     int rel=rela(c1, c2);
     if (rel>=3) return 0;
     if (rel<=1) return min(S(c1), S(c2));
-    LL d=dis(c1, c2);
-    LL alpha=angle(c2.r, c1.r, d)*2;
-    LL beta=angle(c1.r, c2.r, d)*2;
-    LL S1=S_sector(c1, alpha)-S_iso(c1.r, alpha);
-    LL S2=S_sector(c2, beta)-S_iso(c2.r, beta);
+    double d=dis(c1, c2);
+    double alpha=angle(c2.r, c1.r, d)*2;
+    double beta=angle(c1.r, c2.r, d)*2;
+    double S1=S_sector(c1, alpha)-S_iso(c1.r, alpha);
+    double S2=S_sector(c2, beta)-S_iso(c2.r, beta);
     return S1+S2;
 }
 inline bool in_hplane(const V &p, const L &l){  //方向向量左侧
@@ -674,7 +673,7 @@ struct cmpA{
     }
 };
 inline bool cmpL(const L &a, const L &b){
-    LL anga=angle(a), angb=angle(b);
+    double anga=angle(a), angb=angle(b);
     if (equal(anga, angb)) return in_hplane(a.a, b);
     return anga<angb;
 }
@@ -752,7 +751,7 @@ bool edge_point(V *a, const int &n, int p, const L &l){  //判断点a[p]是否�
     return !out_hplane(a[pre(p, n)], l)&&!out_hplane(a[nxt(p, n)], l);
 }
 vector<L> fast_symmetric(V *a, const int &n){
-    LL *s=new LL[n*4];
+    double *s=new double[n*4];
     for (int i=0; i<n; ++i){
         s[i*2]=(a[i]-a[pre(i, n)])^(a[nxt(i, n)]-a[i]);  //角
         s[i*2+1]=dis(a[i], a[nxt(i, n)]);  //边
@@ -778,21 +777,21 @@ vector<L> fast_symmetric(V *a, const int &n){
     delete[] s; delete[] p;
     return sym;
 }
-LL Simpson(LL (*F)(LL), LL a, LL b){
-    LL c=(a+b)/2;
+double Simpson(double (*F)(double), double a, double b){
+    double c=(a+b)/2;
     return (b-a)*(F(a)+4*F(c)+F(b))/6;
 }
-LL Romberg(LL (*F)(LL), LL a, LL b, LL prians){  //Romberg积分
-    LL c=(a+b)/2;
-    LL l=Simpson(F, a, c), r=Simpson(F, c, b);
+double Romberg(double (*F)(double), double a, double b, double prians){  //Romberg积分
+    double c=(a+b)/2;
+    double l=Simpson(F, a, c), r=Simpson(F, c, b);
     if (equal(l+r, prians)) return l+r;
     else return Romberg(F, a, c, l)+Romberg(F, c, b, r);
 }
-inline LL calc1(const C &c, const LL &theta){  //格林公式后对圆弧积分
-    LL x=c.o.x, r=c.r;
+inline double calc1(const C &c, const double &theta){  //格林公式后对圆弧积分
+    double x=c.o.x, r=c.r;
     return x*r*sin(theta)+sqr(r)/4*sin(2*theta)+sqr(r)/2*theta;
 }
-LL CircleUnion(const C *a, const int &n){
+double CircleUnion(const C *a, const int &n){
     bool *skip=new bool[n]();
     for (int i=0; i<n; ++i)
         for (int j=0; j<n; ++j)
@@ -800,8 +799,8 @@ LL CircleUnion(const C *a, const int &n){
                 if (a[i].r<a[j].r) skip[i]=true;
                 if (equal(a[i].r, a[j].r)&&i<j) skip[i]=true;
             }
-    LL a1, a2, l, r, ans=0; int cnt=0, t;
-    pair<LL, int> *mark=new pair<LL, int>[2*n+10]();
+    double a1, a2, l, r, ans=0; int cnt=0, t;
+    pair<double, int> *mark=new pair<double, int>[2*n+10]();
     for (int i=0; i<n; ++i){  //i作为被区间覆盖的圆
         if (skip[i]) continue;
         t=0, cnt=0;
@@ -830,12 +829,12 @@ LL CircleUnion(const C *a, const int &n){
     return ans;
 }
 struct Dynaseg{  //动态线段并/差，保证无重叠
-    using pdd=pair<LL, LL>;
+    using pdd=pair<double, double>;
     using iter=set<pdd>::iterator;
     set<pdd> s;
-    static LL ans;
+    static double ans;
     C obj;
-    void insert(LL l, LL r){
+    void insert(double l, double r){
         if (l>r){
             insert(l, 2*PI); insert(0, r);
             return;
@@ -855,3 +854,57 @@ struct Dynaseg{  //动态线段并/差，保证无重叠
 };
 }
 using namespace geo_2d;
+
+const int maxn=1005;
+int n, r1, r2, R, a[maxn], t;
+long long ans=-INF;
+V P, Q, b[maxn], P1, P2;
+C cir, A, B;
+struct node{
+    double angle;
+    int val;
+}c[maxn*2];
+bool mycmp(const node &a, const node &b){
+    return geo_2d::less(a.angle, b.angle)||equal(a.angle, b.angle)&&a.val<b.val;
+}
+inline double restr(double x){ return x<0?x+2*PI:x; }  //限制角度范围到0~2pi
+
+int main(){
+    scanf("%d%d%d%d", &n, &r1, &r2, &R);
+    P.read();
+    cir=C(P, r1+r2);
+    for (int i=0; i<n; ++i) scanf("%d", &a[i]);
+    read_polygon(b, n, false);
+    for (int i=0; i<n; ++i){
+        if (geo_2d::greater(dis(b[i], P), r1+r2+R)) continue;
+        Q=V(b[i].x+R, b[i].y);
+        A=C(Q, R);
+        t=0;
+        for (int j=0; j<n; ++j){  //算点应用于滑动窗口的角度与贡献
+            if (i==j||geo_2d::greater(dis(b[j], b[i]), 2*R)) continue;
+            B=C(b[i], dis(b[i], b[j]));
+            get_intersection(A, B, P1, P2);
+            if (P1.y<P2.y) swap(P1, P2);
+            c[t++]=(node){restr(angle(b[j]-b[i])-angle(P1-b[i])), a[j]};
+            c[t++]=(node){restr(angle(b[j]-b[i])-angle(P2-b[i])), -a[j]};
+        }
+        c[t++]=(node){angle(P-b[i]), 0};
+        long long cnt=0;
+        if (a[i]>0) cnt=a[i];
+        for (int j=0; j<n; ++j){
+            if (i==j) continue;
+            if (in_cir(b[j], A)) cnt+=a[j];
+        }
+        if (in_cir(b[i]+R*V(1,0), cir))
+            ans=max(ans, cnt);
+        sort(c, c+t, mycmp);
+        for (int j=0; j<t; ++j){
+            cnt+=c[j].val;
+            if (out_cir(b[i]+R*rotate(V(1,0), c[j].angle), cir))
+                continue;
+            ans=max(ans, cnt);
+        }
+    }
+    printf("%lld\n", ans<=-INF+eps?0:ans);
+    return 0;
+}
