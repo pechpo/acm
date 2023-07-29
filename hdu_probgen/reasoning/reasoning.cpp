@@ -18,11 +18,6 @@ string property(char c){
     return "error";
 }
 
-string connect(string s1, string s2){
-    if (s1=="error"||s2=="error") return "error";
-    return "("+s1+"I"+s2+")";
-}
-
 bool isfree(int l, int r){
     string prop=property(A[l]);
     if (prop=="connective"){
@@ -46,6 +41,11 @@ bool isfree(int l, int r){
     return false;
 }
 
+string connect(string s1, string s2){
+    if (s1=="error"||s2=="error") return "error";
+    return "("+s1+"I"+s2+")";
+}
+
 string solve(int l, int r){
     string res="";
     string prop=property(A[l]);
@@ -65,7 +65,7 @@ string solve(int l, int r){
         }
     }
     if (prop=="forall"){
-        if (!isfree(l, r)) return A.substr(l, r);
+        if (!isfree(l, r)) return A.substr(l, r-l);
         if (term.find(A[l+1])!=string::npos) return "error";
         res=solve(l+2, r);
         if (res=="error") return "error";
@@ -78,6 +78,8 @@ string solve(int l, int r){
 }
 
 int main(){
+    //freopen("data.in", "r", stdin);
+    //freopen("data.out", "w", stdout);
     scanf("%d", &T);
     while (T--){
         cin>>A;
@@ -97,5 +99,6 @@ int main(){
             else cout<<"Y"<<endl<<ans<<endl;
         }
     }
+    //fclose(stdin); fclose(stdout);
     return 0;
 }

@@ -891,8 +891,11 @@ int main(){
                             mindis=dis(p, a[id]), p2=p, p3=k;
                     }
                 }
-                b[j].push_back(make_pair(0, 1));
-                b[p3].push_back(make_pair(dis(p2, a[p3]), -1));
+                int flag=1;
+                for (int k=id+1; k!=id; k=nxt(k, n))
+                    if (k==p3) flag=-1;
+                b[j].push_back(make_pair(0, flag));
+                b[p3].push_back(make_pair(dis(p2, a[p3]), -flag));
             }
         }
     }
