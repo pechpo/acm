@@ -23,8 +23,8 @@ void dfs(int x){
 }
 
 int main(){
-    //freopen("data.in", "r", stdin);  //
-    //freopen("data.out", "w", stdout);  //
+    freopen("data.in", "r", stdin);  //
+    freopen("data.out", "w", stdout);  //
     scanf("%d", &T);
     while (T--){
         scanf("%d%d%d", &n, &m, &k);
@@ -73,6 +73,6 @@ int main(){
         }
         printf("%d\n", best);
     }
-    //fclose(stdin); fclose(stdout);  //
+    fclose(stdin); fclose(stdout);  //
     return 0;
 }

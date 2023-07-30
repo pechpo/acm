@@ -3,7 +3,7 @@
 #include <ctime>
 #include <queue>
 #include <cstdio>
-#include <random>
+#include <string>
 #include <vector>
 #include <cstring>
 #include <algorithm>
@@ -857,59 +857,34 @@ struct Dynaseg{  //动态线段并/差，保证无重叠
 }
 using namespace geo_2d;
 
-int minm, maxm, n;
-default_random_engine engine(time(0));
-uniform_int_distribution<> *distrib;
-
-void init(){
-    minm=-100, maxm=100, n=50;
-    distrib=new uniform_int_distribution<>(minm, maxm);
-}
-void init2(){
-    minm=-1e9, maxm=1e9, n=80;
-    distrib=new uniform_int_distribution<>(minm, maxm);
-}
-
-int rand(){
-    return (*distrib)(engine);
-}
-
-const int maxn=1005;
+const int maxn=105;
+int n;
 V a[maxn];
 
 int main(){
-    init2();
-    while (true){
-        int cnt, i=0;
-        while (i<n){
-            printf("%d\n", i);
-            cnt=0;
-            while (true){
-                a[i]=V(rand(), rand());
-                bool f2=true;
-                for (int j=1; j<i-1; ++j)
-                    if (is_intersect(L(a[j-1], a[j]), L(a[i-1], a[i])))
-                        f2=false;
-                if (f2) break;
-                ++cnt;
-                if (cnt==100) break;
-            }
-            if (cnt==100) i=max(0, i-n/10);
-            i++;
+    srand(time(NULL));
+    freopen("data1.in", "w", stdout);
+    for (int i=1; i<=5; ++i){
+        freopen((to_string(i)+".in").c_str(), "r", stdin);
+        read_polygon(a, n, true);
+        double ang=0;
+        for (int i=0; i<n; ++i)  //判断绕行方向
+            ang+=angle2(a[i]-a[pre(i, n)], a[nxt(i, n)]-a[i]);
+        //printf("%.9lf\n", ang);
+        int flag=1;
+        if (ang<0) flag=-1;
+        vector<int> b;
+        b.clear();
+        for (int i=0; i<n; ++i){
+            if (((a[i]-a[pre(i, n)])^(a[nxt(i, n)]-a[i]))*flag<eps) continue;
+            if (rand()%2==0) b.push_back(i+1);
         }
-        bool f2=true;
-        for (int j=2; j<n-1; ++j)
-            if (is_intersect(L(a[j-1], a[j]), L(a[n-1], a[0])))
-                f2=false;
-        if (f2) break;
+        printf("%d %d\n", n, b.size());
+        for (int i=0; i<n; ++i)
+            a[i].print_int();
+        for (auto x:b) printf("%d\n", x);
+        fclose(stdin);
     }
-    print_polygon(a, n, true);
-    freopen("data.txt", "w", stdout);
-    putchar('[');
-    for (int i=0; i<n; ++i)
-        printf("[%d, %d],", int(a[i].x), int(a[i].y));
-    putchar(']');
     fclose(stdout);
-    system("python polygon_draw.py");
     return 0;
 }

@@ -859,44 +859,92 @@ const int maxn=105;
 int T, n, m;
 V a[maxn];
 vector<pair<double, int>> b[maxn];
+vector<pair<double, int>> dark, light;
 
 int main(){
+    //freopen("data.in", "r", stdin);
+    //freopen("data.out", "w", stdout);
     scanf("%d", &T);
     while (T--){
         scanf("%d%d", &n, &m);
         read_polygon(a, n, false);
+        double ang=0;
+        for (int i=0; i<n; ++i)  //判断绕行方向
+            ang+=angle2(a[i]-a[pre(i, n)], a[nxt(i, n)]-a[i]);
+        if (ang<0) reverse(a, a+n);  //保证逆时针绕行
         int id; int v1, v2;
         L seg, l;
-        V p2; int p3;
+        V p2; int p3, flag;
         double mindis;
-        for (int i=0; i<m; ++i){
-            scanf("%d", &id);
-            for (int j=id+1; j!=id; j=nxt(j, n)){  //寻找转折点
+        light.clear();
+        for (int i=0; i<m; ++i){  //对每个观察点
+            for (int i=0; i<n; ++i) b[i].clear();
+            scanf("%d", &id); id--;
+            for (int j=nxt(id, n); j!=id; j=nxt(j, n)){  //寻找转折点
+                if (((a[j]-a[pre(j, n)])^(a[nxt(j, n)]-a[j]))>-eps) continue;  //必须是转折点
                 v1=(a[j]-a[pre(j, n)])^(a[j]-a[id]);
                 v2=(a[j]-a[id])^(a[nxt(j, n)]-a[j]);
-                if (!(v1>=-eps&&v2>eps)) continue;  //必须是转折点
+                if (v1<eps&&v2<-eps) flag=1;  //第一类转折点
+                else if (v1>eps&&v2>-eps) flag=-1;  //第二类转折点
+                else continue;  //必须是转折点
                 l=L(a[id], a[j]);
                 mindis=INF;
                 for (int k=0; k<n; ++k){  //寻找投影点
+                    if (k==pre(id, n)||k==id||k==pre(j, n)||k==j) continue;  //投影点不可是观察点或转折点
                     seg=L(a[nxt(k, n)], a[k]);
                     if (is_intersect2(l, seg)){
                         if (parallel(l, seg)){
-                            if (dis(seg.a, a[id])<mindis&&(seg.a-a[id])*(a[j]-a[id])>=0)
+                            if (dis(seg.a, a[id])<mindis&&(seg.a-a[j])*(a[j]-a[id])>=0)
                                 mindis=dis(seg.a, a[id]), p2=seg.a, p3=k;
-                            if (dis(seg.b, a[id])<mindis&&(seg.b-a[id])*(a[j]-a[id])>=0)
+                            if (dis(seg.b, a[id])<mindis&&(seg.b-a[j])*(a[j]-a[id])>=0)
                                 mindis=dis(seg.b, a[id]), p2=seg.b, p3=k;
+                            continue;
                         }
                         V p=intersection(l, seg);
-                        if (dis(p, a[id])<mindis&&(p-a[id])*(a[j]-a[id])>=0)
+                        if (dis(p, a[id])<mindis&&(p-a[j])*(a[j]-a[id])>=0)
                             mindis=dis(p, a[id]), p2=p, p3=k;
                     }
                 }
-                int flag=1;
-                for (int k=id+1; k!=id; k=nxt(k, n))
-                    if (k==p3) flag=-1;
-                b[j].push_back(make_pair(0, flag));
-                b[p3].push_back(make_pair(dis(p2, a[p3]), -flag));
+                b[j].push_back(make_pair(0, -flag));  //获取差分数组
+                b[p3].push_back(make_pair(dis(p2, a[p3]), flag));
+            }
+            dark.clear();
+            double cnt_dis=0;
+            for (int i=0; i<n; ++i){  //把所有差分点展成于直线上
+                for (auto j:b[i])
+                    dark.push_back(make_pair(j.first+cnt_dis, j.second));
+                cnt_dis+=dis(a[i], a[nxt(i, n)]);
+            }
+            sort(dark.begin(), dark.end());
+            int maxm=-1e9, cnt=0;
+            for (int i=0; i<dark.size(); ++i){
+                cnt+=dark[i].second;
+                maxm=max(maxm, cnt);  //记录最大值，其出现代表见光
+            }
+            cnt=0;
+            for (int i=0; i<dark.size(); ++i){
+                cnt+=dark[i].second;
+                if (cnt==maxm) light.push_back(dark[i]),
+                    light.push_back(dark[nxt(i, dark.size())]);
             }
         }
+        sort(light.begin(), light.end());
+        int cnt=0, minm=1e9; double C=0, ans=0;
+        for (int i=0; i<n; ++i) C+=dis(a[i], a[nxt(i, n)]);
+        ans=C;
+        for (int i=0; i<light.size(); ++i){
+            cnt+=light[i].second;
+            minm=min(minm, cnt);  //记录最小值，其出现代表不见光
+        }
+        cnt=0;
+        for (int i=0; i<light.size(); ++i){
+            cnt+=light[i].second;
+            double t=light[nxt(i, light.size())].first-light[i].first;
+            if (t<0) t+=C;
+            if (cnt==minm) ans-=t;
+        }
+        printf("%.9lf\n", ans);
     }
+    //fclose(stdin); fclose(stdout);
+    return 0;
 }
