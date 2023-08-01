@@ -117,11 +117,11 @@ inline double angle(const V &v){  //从x轴开始算的2pi范围角度
 inline double angle(const L &l){
     return angle(l.d);
 }
-inline V priject(const V &p, const L &l){
+inline V project(const V &p, const L &l){
     return l.a+((p-l.a)*unit(l.d))*unit(l.d);
 }
 inline V reflect(const V &p, const L &l){
-    return 2*priject(p, l)-p;
+    return 2*project(p, l)-p;
 }
 inline bool on_line(const V &p, const L &l){
     return zero(l.d^(p-l.a));
@@ -570,7 +570,7 @@ inline C excircle(const V &a, const V &b, const V &c){
 }
 inline void get_intersection(const C &c, V &a, V &b){  //圆与直线交点
     L l=L(a, b);
-    V p=priject(c.o, l);
+    V p=project(c.o, l);
     double d=sqrt(sqr(c.r)-sqr(dis(c.o, l)));
     a=p+unit(l.d)*d;
     b=p-unit(l.d)*d;
@@ -854,3 +854,27 @@ struct Dynaseg{  //动态线段并/差，保证无重叠
 };
 }
 using namespace geo_2d;
+
+const int maxn=1e4+5;
+int n, m;
+V a[maxn], b[maxn];
+
+int main(){
+    scanf("%d%d", &m, &n);
+    read_polygon(a, m, false);
+    read_polygon(b, n, false);
+    for (int i=0; i<n; ++i){
+        double min_dis=INF;
+        V p; L l; double x1, x2;
+        for (int j=0; j<m; ++j)
+            min_dis=min(min_dis, dis(b[i], a[j]));
+        for (int j=0; j<m-1; ++j){
+            l=L(a[j], a[j+1]);
+            x1=(b[i]-a[j+1])*l.d;
+            x2=(b[i]-a[j])*l.d;
+            if (x1*x2<0) min_dis=min(min_dis, dis(b[i], l));
+        }
+        printf("%.4lf\n", min_dis);
+    }
+    return 0;
+}
