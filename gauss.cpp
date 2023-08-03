@@ -4,8 +4,8 @@
 using namespace std;
 
 const double eps=1e-9;
-const int maxn=5, maxm=5;
-int T;
+const int maxn=105, maxm=105;
+int T, n, m;
 double a[maxn][maxm], b[maxm];
 
 inline bool nzero(double x){ return abs(x)>eps; }
@@ -16,6 +16,7 @@ void print_matrix(double (*a)[maxm], int n, int m){
             printf("%lf ", a[i][j]);
         puts("");
     }
+    puts("");
 }
 
 int gauss(double (*a)[maxm], int n, int m, double *b){  //高斯消元，m的最后一列是b
@@ -62,37 +63,20 @@ int gauss(double (*a)[maxm], int n, int m, double *b){  //高斯消元，m的最
 }
 
 int main(){
-    scanf("%d", &T);
-    while (T--){
-        for (int i=0; i<4; ++i)
-            for (int j=0; j<3; ++j)
-                scanf("%lf", &a[j][i]);
-        for (int i=0; i<4; ++i) b[i]=0;
-        int res=gauss(a, 3, 4, b);
-        if (res<0) puts("NO");
-        if (res==0){
-            bool flag=true;
-            for (int i=0; i<3; ++i)
-                if (b[i]<-eps) flag=false;
-            puts(flag?"YES":"NO");
-        }
-        if (res==1){
-            if (nzero(a[0][0])){
-                double A=a[0][3]/a[0][2], B=a[1][3]/a[1][2];
-                if (a[1][2]>0){
-                    double t=min(A, B);
-                    puts(t<-eps?"NO":"YES");
-                } else {
-                    if (A<B) puts("NO");
-                    else if (A<0) puts("NO");
-                    else puts("YES");
-                }
-            } else {
-                double t=min(a[0][3]/a[0][1], a[1][3]/a[1][2]);
-                puts(t<-eps?"NO":"YES");
-            }
-        }
-        if (res>=2) puts("YES");
+    scanf("%d", &n);
+    for (int i=0; i<n; ++i)
+        for (int j=0; j<n+1; ++j)
+            scanf("%lf", &a[i][j]);
+    int res=gauss(a, n, n+1, b);
+    if (res>0){
+        puts("0");
+        return 0;
     }
+    if (res<0){
+        puts("-1");
+        return 0;
+    }
+    for (int i=0; i<n; ++i)
+        printf("x%d=%.2lf\n", i+1, b[i]);
     return 0;
 }

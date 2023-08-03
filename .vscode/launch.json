@@ -8,8 +8,8 @@
         "stopAtEntry": false,
         "cwd": "${workspaceFolder}", 
         "environment": [],
-        //"externalConsole": true,
-        //"internalConsoleOptions": "neverOpen",
+        "externalConsole": true,
+        "internalConsoleOptions": "neverOpen",
         "MIMode": "gdb", 
         "miDebuggerPath": "gdb.exe", 
         "setupCommands": [  //传入gdb的参数
