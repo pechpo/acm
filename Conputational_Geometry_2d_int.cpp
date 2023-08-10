@@ -4,10 +4,12 @@
 #include <queue>
 #include <cstdio>
 #include <vector>
+#include <string>
 #include <cstring>
 #include <algorithm>
 using namespace std;
 
+#define double long double
 typedef long long LL;
 //acos返回0~pi，asin返回-pi/2~pi/2。axx系列精度不好，慎用
 namespace geo_2d{
@@ -57,7 +59,7 @@ inline bool operator==(const V &a, const V &b){ return a.x==b.x&&a.y==b.y;}
 inline bool operator!=(const V &a, const V &b){ return !(a==b); }
 inline LL operator*(const V &a, const V &b){ return a.x*b.x+a.y*b.y; }
 inline LL operator^(const V &a, const V &b){ return a.x*b.y-a.y*b.x; }
-inline double len(const V &a){ return sqrt(a.x*a.x+a.y*a.y); }
+inline double len(const V &a){ return sqrtl(a.x*a.x+a.y*a.y); }
 inline double dis(const V &a, const V &b){ return len(a-b); }
 inline V c_wise(const V &a){ return V(a.y, -a.x); }
 inline double S_tri(const V &a, const V &b, const V &c){ return abs((b-a)^(c-a))/2; }
@@ -100,11 +102,22 @@ inline double angle(const V &v){  //从x轴开始算
     double tmp=atan2(v.y, v.x);
     return tmp>=0?tmp:tmp+2*PI;
 }
+inline void get_coef(const L &l, LL &a, LL &b, LL &c){
+    V t=c_wise(l.d);
+    a=t.x; b=t.y;
+    c=-l.a*t;
+}
 inline double angle(const L &l){
     return angle(l.d);
 }
 inline bool on_line(const V &p, const L &l){
     return (l.d^(p-l.a))==0;
+}
+inline bool in_region(const V &p, const L &l){  //p在线段l的横扫区域中
+    V a=p-l.a, b=p-l.b, d=l.d;
+    if (a*d>0&&b*d>0) return false;
+    if (a*d<0&&b*d<0) return false;
+    return true;
 }
 inline bool on_seg(const V &p, const L &l){
     return (dis(p, l.a)+dis(p, l.b)-dis(l.a, l.b))==0;
@@ -122,7 +135,7 @@ inline bool orthogonal(const L &l1, const L &l2){ return (l1.d*l2.d)==0; }
 inline bool straddle(const L &l1, const L &l2){  //l1跨立在l2上
     LL f1=(l1.a-l2.a)^l2.d;
     LL f2=(l1.b-l2.a)^l2.d;
-    if (f1*f2<=0) return true;
+    if (f1<=0&&f2>=0||f1>=0&&f2<=0) return true;
     else return false;
 }
 inline bool is_intersect2(const L &l1, const L &l2){  //线与线段相交，l1为线
@@ -131,41 +144,33 @@ inline bool is_intersect2(const L &l1, const L &l2){  //线与线段相交，l1�
     if (a<=0&&b>=0) return true;
     return false;
 }
-inline bool is_intersect(const L &l1, const L &l2){  //线段相交
-    if ((min(l1.a.x, l1.b.x)>=max(l2.a.x, l2.b.x))||
-        (max(l1.a.x, l1.b.x)<=min(l2.a.x, l2.b.x))||
-        (min(l1.a.y, l1.b.y)>=max(l2.a.y, l2.b.y))||
-        (max(l1.a.y, l1.b.y)<=min(l2.a.y, l2.b.y)))
+inline bool is_intersect(const L &l1, const L &l2){  //线段相交：不重合输出false
+    if ((min(l1.a.x, l1.b.x)>max(l2.a.x, l2.b.x))||
+        (max(l1.a.x, l1.b.x)<min(l2.a.x, l2.b.x))||
+        (min(l1.a.y, l1.b.y)>max(l2.a.y, l2.b.y))||
+        (max(l1.a.y, l1.b.y)<min(l2.a.y, l2.b.y)))
             return false;
     //以上是快速排斥
     return straddle(l1, l2)&&straddle(l2, l1);
 }  //先考虑l1跨立在l2上，再考虑l2跨立在l1上
 inline void read_polygon(V *a, LL &n, bool with_n){
-    if (with_n) scanf("%d", &n);
+    if (with_n) scanf("%lld", &n);
     for (int i=0; i<n; ++i) a[i].read();
 }
 inline void print_polygon(V *a, LL &n, bool with_n){
-    if (with_n) printf("%d\n", n);
+    if (with_n) printf("%lld\n", n);
     for (int i=0; i<n; ++i) a[i].print();
 }
 //为方便操作直接传数组，以O为原点
-inline double L_polygen(const V *a, const LL &n){
+inline double L_polygon(const V *a, const LL &n){
     double res=0;
     for (LL i=0; i<n; ++i) res+=dis(a[i], a[(i+1)%n]);
     return res;
 }
-inline LL S2_polygen(const V *a, const LL &n){
+inline LL S2_polygon(const V *a, const LL &n){
     LL res=0;
     for (LL i=0; i<n; ++i) res+=(a[i]^a[(i+1)%n]);
     return res;
-}
-inline void read_polygen(V *a, LL &n, bool with_n){
-    if (with_n) scanf("%lld", &n);
-    for (LL i=0; i<n; ++i) a[i].read();
-}
-inline void print_polygen(V *a, LL &n, bool with_n){
-    if (with_n) printf("%lld\n", n);
-    for (LL i=0; i<n; ++i) a[i].print();
 }
 inline bool is_convex(const V *a, const LL &n){
     LL j, k, d=0, nd; LL o;
@@ -421,7 +426,7 @@ double min_dis(V *a, const LL &n){  //最短距离点对
     free(b);
     return ans;
 }
-void Minkowski_sum(V *a, LL n, V *b, LL m, V *c, LL &N){
+void Minkowski_sum(V *a, LL n, V *b, LL m, V *c, LL &N){  //要求凸包起始点为最低点，按逆时针排序 
     V *l=(V*)malloc((n+m)*sizeof(V)); N=0;
     LL cnta=0, cntb=0;
     V pa, pb;
@@ -444,7 +449,7 @@ void Minkowski_sum(V *a, LL n, V *b, LL m, V *c, LL &N){
     else if (!n) c[0]=b[0];
     else c[0]=a[0]+b[0];  //最下面的点，一定是正好往右走  //可以先判一下
     for (LL i=0; i<N; ++i)
-        c[i+1]=c[i]+l[i];
+        c[i+1]=c[i]+l[i];  //生成起始点为最低点，按逆时针排序的凸包 
     free(l);
 }
 using pdd=pair<double, double>;
@@ -463,3 +468,91 @@ inline bool seg_include(const pdd &a, const pdd &b){
 }
 }
 using namespace geo_2d;
+
+const int maxn=1005;
+int T;
+LL n, m, q, N;
+V a[maxn], b[maxn], c[maxn*2], v;
+__int128_t upp, low, g;
+__int128_t gcd(__int128_t x, __int128_t y){
+    return y?gcd(y, x%y):x;
+}
+void print(__int128_t x){
+    string s="";
+    while (x){
+        s+=x%10+48;
+        x/=10;
+    }
+    for (int i=s.length()-1; i>=0; --i) printf("%c", s[i]);
+    if (s=="") putchar('0');
+}
+
+int main(){
+    scanf("%d", &T);
+    while (T--){
+        scanf("%lld%lld%lld", &n, &m, &q);
+        read_polygon(a, n, false);
+        read_polygon(b, m, false);
+        polar_sort(b, m, find_lowest(b, m));
+        for (int i=0; i<n; ++i) a[i]=-a[i];
+        polar_sort(a, n, find_lowest(a, n));
+        Minkowski_sum(a, n, b, m, c, N);
+        //print_polygon(c, N, true);
+        LL in, out;
+        for (int i=0; i<N; ++i){
+            LL t1=(c[i]^c[pre(i, N)]), t2=(c[i]^c[nxt(i, N)]);
+            if (t1<0&&t2<=0) in=i;
+            if (t1>=0&&t2>0) out=i;
+        }
+        while (q--){
+            v.read();
+            L lv=L(O, v);
+            bool flag=false;
+            for (int i=0; i<N; ++i)
+                if (is_intersect(lv, L(c[i], c[nxt(i, N)])))
+                    flag=true;
+            if (!flag){  //不需移动
+                puts("0/1");
+                continue;
+            }
+            LL A, B, C;
+            double t=INF;
+            for (int i=in; i!=out; i=nxt(i, N)){
+                L lt=L(c[i], c[nxt(i, N)]);
+                if (in_region(v, lt)){
+                    get_coef(lt, A, B, C);
+                    if (dis(v, lt)<t){
+                        t=dis(v, lt);
+                        upp=A*v.x+B*v.y+C;
+                        upp*=upp;
+                        low=A*A+B*B;
+                    }
+                }
+            }
+            L l=L(O, c[in]);
+            if (dis(v, l)<t){
+                t=dis(v, l);
+                get_coef(l, A, B, C);
+                upp=A*v.x+B*v.y+C;
+                upp*=upp;
+                low=A*A+B*B;
+            }
+            l=L(O, c[out]);
+            if (dis(v, l)<t){
+                t=dis(v, l);
+                get_coef(l, A, B, C);
+                upp=A*v.x+B*v.y+C;
+                upp*=upp;
+                low=A*A+B*B;
+            }
+            g=gcd(upp, low);
+            upp/=g;
+            low/=g;
+            print(upp);
+            putchar('/');
+            print(low);
+            puts("");
+        }
+    }
+    return 0;
+}
