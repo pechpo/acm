@@ -7,7 +7,7 @@ using namespace std;
 #define double long double
 //acosl返回0~pi，asinl返回-pi/2~pi/2。精度不好所以慎用
 namespace geo_2d{
-const double eps=1e-9, INF=1e9, PI=3.14159265358979323846;
+double eps=1e-20, INF=1e9, PI=3.14159265358979323846;
 struct V{  //向量及其运算是几何基础，点也可以用向量表示
     double x, y;
     V():x(0),y(0){}
@@ -19,6 +19,7 @@ struct V{  //向量及其运算是几何基础，点也可以用向量表示
     void print_int(){ printf("%d %d\n", (int)x, (int)y); }
 }O;  //三个vector参数abc表示以a为顶点的角bac/cab
 inline double sqr(const double &x){ return x*x; }
+inline double cub(const double &x){ return x*x*x; }
 inline bool zero(const double &x){ return abs(x)<eps; }
 inline bool equal(const double &a, const double &b){ return zero(a-b); }
 inline bool less(const double &a, const double &b){ return a<b-eps; }
@@ -31,6 +32,10 @@ inline V operator-(const V &a, const V &b){ return V(a.x-b.x, a.y-b.y); }
 inline V operator*(const double &x, const V &a){ return V(a.x*x, a.y*x); }
 inline V operator*(const V &a, const double &x){ return V(a.x*x, a.y*x); }
 inline V operator/(const V &a, const double &x){ return V(a.x/x, a.y/x); }
+inline V operator+=(V &a, const V &b){ return a=a+b; }
+inline V operator-=(V &a, const V &b){ return a=a-b; }
+inline V operator*=(V &a, const double &x){ return a=a*x; }
+inline V operator/=(V &a, const double &x){ return a=a/x; }
 inline bool operator==(const V &a, const V &b){ return equal(a.x, b.x)&&equal(a.y, b.y);}
 inline bool operator!=(const V &a, const V &b){ return !(a==b); }
 inline double operator*(const V &a, const V &b){ return a.x*b.x+a.y*b.y; }
@@ -432,48 +437,51 @@ bool build_convex(L *a, int &n, V *v){
 }
 using namespace geo_2d;
 
-const int maxn=2005;
-int n, T, h, m;
-double w;
-int x, y, z;
-V v1[maxn], v2[maxn], v3[maxn], v4[maxn*2];
-L l1[maxn], l2[maxn], l[maxn*2];
-
-int pre(int x){ return x?n-1:x-1; }
-int nxt(int x){ return x==n-1?0:x+1; }
+int T;
+V p1, p2, p3, p4;
+double a, b;
+double f(double x, double y){
+    double t=sqrtl(sqr(a)-2*a*x+sqr(b)-2*b*y+sqr(x)+sqr(y));
+    double res=6*(a-x)*(b-y)*t;
+    double t1;
+    t1=3*cub(b-y);
+    if (!equal(t1, 0)) res-=t1*logl(t-a+x);
+    t1=3*x*(3*sqr(a)-3*a*x+sqr(x));
+    if (!equal(t1, 0)) res-=t1*logl(t+b-y);
+    res+=3*sqr(a)*x;
+    t1=3*cub(a);
+    if (!equal(t1, 0)) res+=t1*logl(t+b-y);
+    res-=3*a*sqr(x);
+    res+=cub(x);
+    return res/18;
+}
 
 int main(){
     scanf("%d", &T);
+    V cross;
+    double d1, d2, d3, d4, k1, k2;
     while (T--){
-        scanf("%d%d%Lf", &n, &h, &w);
-        read_polygen(v1, n, false);
-        for (int i=0; i<n; ++i){
-            l1[i]=L(v1[i], v1[nxt(i)]);
-            l1[i].a=l1[i].a+cc_wise(unit(l1[i].d))*w;
-            l1[i].b=l1[i].b+cc_wise(unit(l1[i].d))*w;
-        }
-        hplane_intersection(l1, n);
-        build_convex(l1, n, v2);
-        scanf("%d%d%d", &x, &y, &z);
-        if (in_convex(V(x, y), v2, n)){
-            printf("%.9Lf\n", S_polygen(v2, n));
-            continue;
-        }
-        if (z<=h){
-            puts("0.0");
-            continue;
-        }
-        double lambda=1.0*z/(h-z);
-        for (int i=0; i<n; ++i)
-            v3[i]=V(x+lambda*(x-v2[i].x), y+lambda*(y-v2[i].y));
-        for (int i=0; i<n; ++i){
-            l2[i]=L(v3[i], v3[nxt(i)]);
-            l[i]=l1[i];
-            l[i+n]=l2[i];
-        } m=2*n;
-        hplane_intersection(l, m);
-        build_convex(l, m, v4);
-        printf("%.9Lf\n", S_polygen(v4, m));
+        p1.read(); p2.read();
+        p3.read(); p4.read();
+        double coef=dis(p1, p2)*dis(p3, p4);
+        cross=intersection(L(p1, p2), L(p3, p4));
+        k1=1, k2=1;
+        if ((p1-cross)*(p2-cross)<0) k1=-1;
+        if ((p3-cross)*(p4-cross)<0) k2=-1;
+        d1=dis(p1, cross);
+        d2=dis(p2, cross);
+        d3=dis(p3, cross);
+        d4=dis(p4, cross);
+        p1=V(d1, 0);
+        p2=V(k1*d2, 0);
+        p3=V(0, d3);
+        p4=V(0, k2*d4);
+        if (p1.x>p2.x) swap(p1, p2);
+        if (p3.y>p4.y) swap(p3, p4);
+        a=p3.x; b=p1.y;
+        double ans=f(p2.x, p4.y)-f(p2.x, p3.y)-f(p1.x, p4.y)+f(p1.x, p3.y);
+        ans/=coef;
+        printf("%.20Lf\n", ans);
     }
     return 0;
 }
