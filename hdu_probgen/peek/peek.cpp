@@ -862,8 +862,8 @@ vector<pair<double, int>> b[maxn];
 vector<pair<double, int>> dark, light;
 
 int main(){
-    //freopen("data.in", "r", stdin);
-    //freopen("data.out", "w", stdout);
+    freopen("data.in", "r", stdin);
+    freopen("data.out", "w", stdout);
     scanf("%d", &T);
     while (T--){
         scanf("%d%d", &n, &m);
@@ -937,14 +937,20 @@ int main(){
             minm=min(minm, cnt);  //记录最小值，其出现代表不见光
         }
         cnt=0;
+        //printf("%lf\n", ans);
         for (int i=0; i<light.size(); ++i){
             cnt+=light[i].second;
             double t=light[nxt(i, light.size())].first-light[i].first;
             if (t<0) t+=C;
-            if (cnt==minm) ans-=t;
+            if (cnt==minm){
+                if (T==4){  //debug
+                    //printf("%lf %lf\n", light[i].first, light[nxt(i, light.size())].first);
+                }
+                ans-=t;
+            }
         }
         printf("%.9lf\n", ans);
     }
-    //fclose(stdin); fclose(stdout);
+    fclose(stdin); fclose(stdout);
     return 0;
 }
