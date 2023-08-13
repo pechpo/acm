@@ -9,7 +9,7 @@ using namespace std;
 
 //acos返回0~pi，asin返回-pi/2~pi/2。axx系列精度不好，慎用
 namespace geo_2d{
-const double eps=1e-9, INF=1e18, PI=3.14159265358979323846;
+double eps=1e-9, INF=1e18, PI=3.14159265358979323846;
 struct V{  //向量及其运算是几何基础，点也可以用向量表示
     double x, y;
     V():x(0),y(0){}
@@ -117,11 +117,11 @@ inline double angle(const V &v){  //从x轴开始算的2pi范围角度
 inline double angle(const L &l){
     return angle(l.d);
 }
-inline V priject(const V &p, const L &l){
+inline V project(const V &p, const L &l){
     return l.a+((p-l.a)*unit(l.d))*unit(l.d);
 }
 inline V reflect(const V &p, const L &l){
-    return 2*priject(p, l)-p;
+    return 2*project(p, l)-p;
 }
 inline bool on_line(const V &p, const L &l){
     return zero(l.d^(p-l.a));
@@ -570,7 +570,7 @@ inline C excircle(const V &a, const V &b, const V &c){
 }
 inline void get_intersection(const C &c, V &a, V &b){  //圆与直线交点
     L l=L(a, b);
-    V p=priject(c.o, l);
+    V p=project(c.o, l);
     double d=sqrt(sqr(c.r)-sqr(dis(c.o, l)));
     a=p+unit(l.d)*d;
     b=p-unit(l.d)*d;
@@ -777,11 +777,11 @@ vector<L> fast_symmetric(V *a, const int &n){
     delete[] s; delete[] p;
     return sym;
 }
-double Simpson(double (*F)(double), double a, double b){
+double Simpson(double (*F)(double), double a, double b){  //通过采样三个点计算函数积分近似值
     double c=(a+b)/2;
     return (b-a)*(F(a)+4*F(c)+F(b))/6;
 }
-double Romberg(double (*F)(double), double a, double b, double prians){  //Romberg积分
+double Romberg(double (*F)(double), double a, double b, double prians){  //Romberg自适应积分
     double c=(a+b)/2;
     double l=Simpson(F, a, c), r=Simpson(F, c, b);
     if (equal(l+r, prians)) return l+r;
@@ -854,3 +854,56 @@ struct Dynaseg{  //动态线段并/差，保证无重叠
 };
 }
 using namespace geo_2d;
+
+int T;
+V p1, p2, p3, p4;
+double Simp(double (*F)(double), double a, double b){
+    double c=(a+b)/2;
+    return (b-a)*(F(a)+4*F(c)+F(b))/6;
+}
+double Romb(double (*F)(double), double a, double b, double prians){
+    double c=(a+b)/2;
+    double l=Simp(F, a, c), r=Simp(F, c, b);
+    if (equal(l+r, prians)) return l+r;
+    else return Romb(F, a, c, l)+Romb(F, c, b, r);
+}
+double F2(double y, double C){  //y上积分的解析式
+    double t=sqrt(sqr(C)+sqr(y));
+    double res=y*t;
+    if (!equal(C, 0)) res+=sqr(C)*log(t+y);
+    return res/2;
+}
+double F1(double x){
+    double C=x-p3.x;
+    return F2(p4.y-p1.y, C)-F2(p3.y-p1.y, C);
+}
+
+int main(){
+    freopen("test.in", "r", stdin);
+    freopen("test.out", "w", stdout);
+    scanf("%d", &T);
+    V cross;
+    double d1, d2, d3, d4, k1, k2;
+    while (T--){
+        p1.read(); p2.read();
+        p3.read(); p4.read();
+        cross=intersection(L(p1, p2), L(p3, p4));
+        k1=1, k2=1;
+        if ((p1-cross)*(p2-cross)<0) k1=-1;
+        if ((p3-cross)*(p4-cross)<0) k2=-1;
+        d1=dis(p1, cross);
+        d2=dis(p2, cross);
+        d3=dis(p3, cross);
+        d4=dis(p4, cross);
+        p1=V(d1, 0);
+        p2=V(k1*d2, 0);
+        p3=V(0, d3);
+        p4=V(0, k2*d4);
+        if (p1.x>p2.x) swap(p1, p2);
+        if (p3.y>p4.y) swap(p3, p4);
+        eps=(p2.x-p1.x)*1e-9;
+        printf("%.20lf\n", Romb(F1, p1.x, p2.x, 0)/((p2.x-p1.x)*(p4.y-p3.y)));
+    }
+    fclose(stdin); fclose(stdout);
+    return 0;
+}
