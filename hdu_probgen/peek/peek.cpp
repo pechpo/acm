@@ -862,8 +862,8 @@ vector<pair<double, int>> b[maxn];
 vector<pair<double, int>> dark, light;
 
 int main(){
-    freopen("data.in", "r", stdin);
-    freopen("data.out", "w", stdout);
+    //freopen("data.in", "r", stdin);
+    //freopen("data.out", "w", stdout);
     scanf("%d", &T);
     while (T--){
         scanf("%d%d", &n, &m);
@@ -872,7 +872,7 @@ int main(){
         for (int i=0; i<n; ++i)  //判断绕行方向
             ang+=angle2(a[i]-a[pre(i, n)], a[nxt(i, n)]-a[i]);
         if (ang<0) reverse(a, a+n);  //保证逆时针绕行
-        int id; int v1, v2;
+        int id; double v1, v2;
         L seg, l;
         V p2; int p3, flag;
         double mindis;
@@ -931,13 +931,13 @@ int main(){
         sort(light.begin(), light.end());
         int cnt=0, minm=1e9; double C=0, ans=0;
         for (int i=0; i<n; ++i) C+=dis(a[i], a[nxt(i, n)]);
+        //printf("%.9lf\n", C);
         ans=C;
         for (int i=0; i<light.size(); ++i){
             cnt+=light[i].second;
             minm=min(minm, cnt);  //记录最小值，其出现代表不见光
         }
         cnt=0;
-        //printf("%lf\n", ans);
         for (int i=0; i<light.size(); ++i){
             cnt+=light[i].second;
             double t=light[nxt(i, light.size())].first-light[i].first;
@@ -949,8 +949,8 @@ int main(){
                 ans-=t;
             }
         }
-        printf("%.9lf\n", ans);
+        printf("%.3lf\n", ans);
     }
-    fclose(stdin); fclose(stdout);
+    //fclose(stdin); fclose(stdout);
     return 0;
 }

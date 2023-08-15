@@ -3,7 +3,7 @@
 #include <ctime>
 #include <queue>
 #include <cstdio>
-#include <string>
+#include <random>
 #include <vector>
 #include <cstring>
 #include <algorithm>
@@ -857,34 +857,32 @@ struct Dynaseg{  //动态线段并/差，保证无重叠
 }
 using namespace geo_2d;
 
-const int maxn=105;
-int n;
+int minm, maxm;
+default_random_engine engine(time(0));
+uniform_int_distribution<> *distrib;
+
+void init(){
+    minm=-100, maxm=100;
+    distrib=new uniform_int_distribution<>(minm, maxm);
+}
+void init2(){
+    minm=-1e9, maxm=1e9;
+    distrib=new uniform_int_distribution<>(minm, maxm);
+}
+
+int rand(){
+    return (*distrib)(engine);
+}
+
+const int maxn=700005;
 V a[maxn];
+int n;
 
 int main(){
-    srand(time(NULL));
-    freopen("data1.in", "w", stdout);
-    for (int i=1; i<=5; ++i){
-        freopen((to_string(i)+".in").c_str(), "r", stdin);
-        read_polygon(a, n, true);
-        double ang=0;
-        for (int i=0; i<n; ++i)  //判断绕行方向
-            ang+=angle2(a[i]-a[pre(i, n)], a[nxt(i, n)]-a[i]);
-        //printf("%.9lf\n", ang);
-        int flag=1;
-        if (ang<0) flag=-1;
-        vector<int> b;
-        b.clear();
-        for (int i=0; i<n; ++i){
-            if (((a[i]-a[pre(i, n)])^(a[nxt(i, n)]-a[i]))*flag<eps) continue;
-            b.push_back(i+1);
-        }
-        printf("%d %d\n", n, b.size());
-        for (int i=0; i<n; ++i)
-            a[i].print_int();
-        for (auto x:b) printf("%d\n", x);
-        fclose(stdin);
-    }
-    fclose(stdout);
+    init2(); n=700000;
+    for (int i=0; i<n; ++i) a[i]=V(rand(), rand());
+    polar_sort(a, n, find_lowest(a, n));
+    graham(a, n, true);
+    print_polygon(a, n, true);
     return 0;
 }

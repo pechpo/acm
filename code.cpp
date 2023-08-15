@@ -1,98 +1,63 @@
+#include <queue>
 #include <cstdio>
-#include <cstring>
+#include <vector>
 #include <algorithm>
 using namespace std;
 
-const double eps=1e-9;
-const int maxn=5, maxm=5;
-int T;
-double a[maxn][maxm], b[maxm];
-
-inline bool nzero(double x){ return abs(x)>eps; }
-
-void print_matrix(double (*a)[maxm], int n, int m){
-    for (int i=0; i<n; ++i){
-        for (int j=0; j<m; ++j)
-            printf("%lf ", a[i][j]);
-        puts("");
+const int maxn=1e5+5;
+int n, vis[maxn];
+struct mypair{
+    double t;
+    int from, to;
+};
+struct mycmp{
+    bool operator()(const mypair &a, const mypair &b){
+        return a.t>b.t;
     }
+};
+priority_queue<mypair, vector<mypair>, mycmp> q;
+struct point{
+    int v, p;
+}P[maxn];
+bool cmp(const point &a, const point &b){
+    return a.p<b.p||a.p==b.p&&a.v>b.v;
 }
-
-int gauss(double (*a)[maxm], int n, int m, double *b){  //高斯消元，m的最后一列是b
-    int cnt=0;  //第一个未处理的行
-    for (int i=0; i<m-1; ++i){  //第一个未处理的列
-        int pos=-1;
-        for (int j=cnt; j<n; ++j)
-            if (pos==-1&&nzero(a[j][i])) pos=j;
-        if (pos==-1) continue;  //寻找非零行
-        for (int j=0; j<m; ++j)
-            swap(a[cnt][j], a[pos][j]);
-        for (int j=cnt+1; j<n; ++j){  //此行减去第cnt行
-            double coef=a[j][i]/a[cnt][i];
-            for (int k=0; k<m; ++k)
-                a[j][k]-=coef*a[cnt][k];
-        }
-        //print_matrix(a, n, m);
-        cnt++;
-    }
-    cnt=0;  //非零行数目
-    for (int i=0; i<n; ++i){
-        bool flag=false;
-        for (int j=0; j<m-1; ++j)
-            if (nzero(a[i][j])) flag=true;
-        if (!flag&&nzero(a[i][m-1])) return -1;  //无解
-        cnt+=flag;
-    }
-    for (int i=n-1; i>=0; --i){  //反向求解
-        int pos=-1;
-        for (int j=0; j<m-1; ++j)
-            if (pos==-1&&nzero(a[i][j])) pos=j;
-        if (pos==-1) continue;  //寻找非零行
-        double coef=a[i][pos];
-        for (int j=0; j<m; ++j) a[i][j]/=coef;  //把首个系数化成1
-        for (int j=0; j<i; ++j){
-            coef=a[j][pos];
-            for (int k=0; k<m; ++k)
-                a[j][k]-=coef*a[i][k];
-        }
-        b[pos]=a[i][m-1];
-        //print_matrix(a, n, m);
-    }
-    return n-cnt;  //零行数目，即自由元数目
-}
+struct node{
+    int nxt, pre;
+}a[maxn];
 
 int main(){
-    scanf("%d", &T);
-    while (T--){
-        for (int i=0; i<4; ++i)
-            for (int j=0; j<3; ++j)
-                scanf("%lf", &a[j][i]);
-        for (int i=0; i<4; ++i) b[i]=0;
-        int res=gauss(a, 3, 4, b);
-        if (res<0) puts("NO");
-        if (res==0){
-            bool flag=true;
-            for (int i=0; i<3; ++i)
-                if (b[i]<-eps) flag=false;
-            puts(flag?"YES":"NO");
-        }
-        if (res==1){
-            if (nzero(a[0][0])){
-                double A=a[0][3]/a[0][2], B=a[1][3]/a[1][2];
-                if (a[1][2]>0){
-                    double t=min(A, B);
-                    puts(t<-eps?"NO":"YES");
-                } else {
-                    if (A<B) puts("NO");
-                    else if (A<0) puts("NO");
-                    else puts("YES");
-                }
-            } else {
-                double t=min(a[0][3]/a[0][1], a[1][3]/a[1][2]);
-                puts(t<-eps?"NO":"YES");
-            }
-        }
-        if (res>=2) puts("YES");
+    scanf("%d", &n);
+    for (int i=1; i<=n; ++i)
+        scanf("%d%d", &P[i].p, &P[i].v);
+    sort(P+1, P+n+1, cmp);
+    a[0].nxt=1; a[1].pre=0;
+    a[n].nxt=n+1; a[n+1].pre=n;
+    for (int i=1; i<n; ++i){
+        a[i].nxt=i+1;
+        a[i+1].pre=i;
+        if (P[i].p==P[i+1].p&&P[i].v==P[i+1].v) q.push((mypair){0, i, i+1});
+        if (P[i].v<=P[i+1].v) continue;
+        q.push((mypair){1.0*(P[i+1].p-P[i].p)/(P[i].v-P[i+1].v), i, i+1});
     }
+    while (!q.empty()){
+        while (!q.empty()&&vis[q.top().to]) q.pop();  //不能追及已经消失的点
+        if (q.empty()) break;
+        double t=q.top().t;
+        int id=q.top().from;
+        q.pop();
+        vis[id]=1;
+        int pre=a[id].pre, nxt=a[id].nxt;
+        a[pre].nxt=nxt; a[nxt].pre=pre;
+        if (P[pre].p==P[nxt].p&&P[pre].v==P[nxt].v) q.push((mypair){0, pre, nxt});
+        if (P[pre].v<=P[nxt].v) continue;
+        q.push((mypair){1.0*(P[nxt].p-P[pre].p)/(P[nxt].v-P[pre].v), pre, nxt});
+    }
+    int cnt=0, ans=0;
+    for (int i=1; i<=n; ++i){
+        if (vis[i]!=0) cnt++;
+        else ans=max(ans, cnt), cnt=0;
+    }
+    printf("%d\n", ans+1);
     return 0;
 }
